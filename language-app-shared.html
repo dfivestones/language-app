@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>외국어 표현 복습</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #1a1a2e; min-height: 100vh; }
+
+    .header { background: white; padding: 14px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .header h1 { font-size: 17px; font-weight: 700; }
+    .header .stats { font-size: 11px; color: #999; }
+
+    .nav { display: flex; background: white; border-bottom: 2px solid #f0f0f0; position: sticky; top: 49px; z-index: 9; }
+    .nav-btn { flex: 1; padding: 11px 4px; text-align: center; border: none; background: none; cursor: pointer; font-size: 13px; color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+    .nav-btn.active { color: #6c63ff; border-bottom-color: #6c63ff; font-weight: 600; }
+
+    .section { display: none; padding: 20px 16px; }
+    .section.active { display: block; }
+
+    /* Flashcard */
+    .card-container { perspective: 1000px; margin: 8px auto 16px; max-width: 380px; }
+    .card { width: 100%; height: 220px; position: relative; transform-style: preserve-3d; transition: transform 0.45s; cursor: pointer; }
+    .card.flipped { transform: rotateY(180deg); }
+    .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; box-shadow: 0 4px 24px rgba(108,99,255,0.15); }
+    .card-front { background: linear-gradient(135deg, #6c63ff 0%, #9c8fff 100%); color: white; }
+    .card-back { background: white; transform: rotateY(180deg); border: 2px solid #e8e5ff; }
+    .card-lang { font-size: 12px; opacity: 0.75; margin-bottom: 10px; letter-spacing: 0.5px; }
+    .card-expression { font-size: 30px; font-weight: 700; margin-bottom: 10px; line-height: 1.2; }
+    .card-hint { font-size: 12px; opacity: 0.6; }
+    .card-meaning { font-size: 20px; font-weight: 700; color: #2d2d44; margin-bottom: 8px; }
+    .card-example { font-size: 13px; color: #666; font-style: italic; line-height: 1.4; }
+    .card-memo { font-size: 11px; color: #aaa; margin-top: 8px; line-height: 1.3; }
+
+    .progress-wrap { max-width: 380px; margin: 0 auto 4px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #aaa; margin-bottom: 6px; }
+    .progress-bar { background: #eee; border-radius: 100px; height: 5px; }
+    .progress-fill { background: linear-gradient(90deg, #6c63ff, #9c8fff); height: 100%; border-radius: 100px; transition: width 0.4s; }
+
+    .review-btns { display: flex; gap: 10px; max-width: 380px; margin: 12px auto 8px; }
+    .btn { padding: 12px 16px; border: none; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; flex: 1; transition: all 0.15s; }
+    .btn:active { transform: scale(0.97); }
+    .btn-wrong { background: #ffe5e5; color: #e53e3e; }
+    .btn-correct { background: #e6ffed; color: #2f9e44; }
+    .btn-wrong:hover { background: #ffd0d0; }
+    .btn-correct:hover { background: #d0f5dd; }
+    .btn-primary { background: #6c63ff; color: white; }
+    .btn-primary:hover { background: #5a52d5; }
+    .btn-secondary { background: #f0f0f0; color: #666; font-size: 13px; }
+    .btn-full { width: 100%; }
+    .btn-mastered { width: 100%; max-width: 380px; display: block; margin: 0 auto; background: #f8f5ff; color: #9c8fff; font-size: 13px; }
+
+    /* Add form */
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-control { width: 100%; padding: 10px 13px; border: 1.5px solid #e4e4e4; border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.2s; font-family: inherit; background: white; }
+    .form-control:focus { border-color: #6c63ff; }
+    textarea.form-control { resize: vertical; min-height: 64px; line-height: 1.5; }
+    .section-title { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+    .section-sub { font-size: 13px; color: #999; margin-bottom: 18px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* List */
+    .filter-bar { display: flex; gap: 7px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-btn { padding: 6px 13px; border: 1.5px solid #e4e4e4; border-radius: 100px; background: white; cursor: pointer; font-size: 12px; white-space: nowrap; transition: all 0.15px; font-weight: 500; }
+    .filter-btn.active { border-color: #6c63ff; background: #6c63ff; color: white; }
+    .expr-card { background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+    .expr-card-top { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
+    .badge { font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 600; }
+    .badge-cn { background: #ffe0e0; color: #c00; }
+    .badge-jp { background: #dde8ff; color: #3a5; }
+    .badge-due { background: #fff3cd; color: #856404; }
+    .badge-done { background: #d4edda; color: #155724; }
+    .expr-title { font-size: 19px; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
+    .expr-meaning { font-size: 14px; color: #555; margin-bottom: 5px; }
+    .expr-example { font-size: 12px; color: #888; font-style: italic; margin-bottom: 6px; line-height: 1.4; }
+    .expr-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 100px; background: #f4f4f4; color: #777; }
+    .expr-footer { font-size: 11px; color: #ccc; margin-top: 7px; }
+    .expr-memo { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+    /* Setup banner */
+    .setup-banner { background: #fff3cd; border: 1.5px solid #ffc107; border-radius: 14px; padding: 16px; margin-bottom: 20px; }
+    .setup-banner h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #856404; }
+    .setup-banner p { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+    .setup-banner input { width: 100%; padding: 8px 12px; border: 1.5px solid #e4e4e4; border-radius: 8px; font-size: 13px; font-family: monospace; margin-bottom: 8px; outline: none; }
+    .setup-banner input:focus { border-color: #6c63ff; }
+
+    /* States */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 52px; margin-bottom: 14px; }
+    .empty-state p { font-size: 15px; color: #bbb; line-height: 1.5; }
+    .loading-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; gap: 14px; }
+    .spinner { width: 30px; height: 30px; border: 3px solid #eee; border-top-color: #6c63ff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .loading-wrap p { font-size: 13px; color: #bbb; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .review-done { text-align: center; padding: 40px 20px; }
+    .done-emoji { font-size: 60px; margin-bottom: 14px; }
+    .done-title { font-size: 21px; font-weight: 700; margin-bottom: 8px; }
+    .done-sub { font-size: 14px; color: #888; line-height: 1.5; margin-bottom: 20px; }
+
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: #2d2d44; color: white; padding: 10px 20px; border-radius: 100px; font-size: 13px; font-weight: 500; opacity: 0; transition: all 0.28s cubic-bezier(.21,1.02,.73,1); z-index: 999; white-space: nowrap; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    #add-status { text-align: center; margin-top: 10px; font-size: 13px; color: #888; min-height: 18px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🗣️ 외국어 표현</h1>
+  <div class="stats" id="headerStats">불러오는 중...</div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" data-tab="review" onclick="switchTab('review',this)">📚 오늘 복습</button>
+  <button class="nav-btn" data-tab="add" onclick="switchTab('add',this)">➕ 추가</button>
+  <button class="nav-btn" data-tab="list" onclick="switchTab('list',this)">📋 전체 목록</button>
+</div>
+
+<!-- 복습 탭 -->
+<div id="tab-review" class="section active">
+  <div id="review-content">
+    <div class="loading-wrap"><div class="spinner"></div><p>불러오는 중...</p></div>
+  </div>
+</div>
+
+<!-- 추가 탭 -->
+<div id="tab-add" class="section">
+  <div class="section-title">새 표현 추가</div>
+  <div class="section-sub">모임에서 배운 표현을 기록하세요</div>
+
+  <div class="form-group">
+    <label class="form-label">언어 *</label>
+    <select id="add-lang" class="form-control">
+      <option value="🇨🇳 중국어">🇨🇳 중국어</option>
+      <option value="🇯🇵 일본어">🇯🇵 일본어</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">표현 *</label>
+      <input type="text" id="add-expr" class="form-control" placeholder="예: なるほど" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">뜻 *</label>
+      <input type="text" id="add-meaning" class="form-control" placeholder="한국어 뜻" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">예문</label>
+    <textarea id="add-example" class="form-control" placeholder="예문 (선택)"></textarea>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">카테고리</label>
+      <select id="add-category" class="form-control">
+        <option>일상</option><option>인사</option><option>음식</option>
+        <option>감정</option><option>여행</option><option>비즈니스</option><option>기타</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">난이도</label>
+      <select id="add-level" class="form-control">
+        <option value="⭐ 초급">⭐ 초급</option>
+        <option value="⭐⭐ 중급">⭐⭐ 중급</option>
+        <option value="⭐⭐⭐ 고급">⭐⭐⭐ 고급</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">메모</label>
+    <textarea id="add-memo" class="form-control" placeholder="뉘앙스, 사용 상황 등 메모 (선택)"></textarea>
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="addExpression()">저장 💾</button>
+  <div id="add-status"></div>
+</div>
+
+<!-- 전체 목록 탭 -->
+<div id="tab-list" class="section">
+  <div class="section-title">전체 표현</div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
+    <button class="filter-btn" onclick="setFilter('cn',this)">🇨🇳 중국어</button>
+    <button class="filter-btn" onclick="setFilter('jp',this)">🇯🇵 일본어</button>
+    <button class="filter-btn" onclick="setFilter('due',this)">📅 복습 필요</button>
+    <button class="filter-btn" onclick="setFilter('mastered',this)">✅ 암기완료</button>
+  </div>
+  <div id="list-content">
+    <div class="loading-wrap"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ══════════════════════════════════════════════
+  //  ⚙️  설정: Firebase URL을 여기에 넣으세요
+  //  예: 'https://my-project-default-rtdb.firebaseio.com'
+  // ══════════════════════════════════════════════
+  const FIREBASE_URL = 'https://languagestudy-7a491-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+  // ── 초기 시드 데이터 (첫 실행 시 자동 저장) ──────
+  const SEED_DATA = [{"id":"3891443c-87b4-81fc-ba81-f81dfe34506d","표현":"お疲れ様です","언어":"🇯🇵 일본어","뜻":"수고하셨습니다 / 고생하셨습니다","예문":"今日もお疲れ様です！(오늘도 수고하셨습니다!)","카테고리":["인사","비즈니스"],"난이도":"⭐ 초급","메모":"직장에서 자주 쓰는 인사말. 퇴근할 때, 이메일 끝에도 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8126-bb98-d56ee9681612","표현":"随便 (suíbiàn)","언어":"🇨🇳 중국어","뜻":"마음대로 / 아무거나 / 상관없어","예문":"你想吃什么？随便。(뭐 먹고 싶어? 아무거나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"매우 자주 쓰이는 표현. 부정적 뉘앙스로도 쓰일 수 있으니 주의","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8116-9601-d934717634ac","표현":"なるほど","언어":"🇯🇵 일본어","뜻":"그렇구나 / 아하 / 과연","예문":"なるほど、そういうことか。(그렇구나, 그런 거였구나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"상대방 말에 공감하거나 이해할 때 씀. 비즈니스에서는 다소 캐주얼하게 들릴 수 있음","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-818f-98a2-d22db74c3aed","표현":"探店 (tàn diàn)","언어":"🇨🇳 중국어","뜻":"맛집·카페를 직접 방문해 리뷰하다, 맛집 탐방하다","예문":"周末一起去探店吧。(주말에 같이 맛집 탐방 가자.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"SNS(샤오홍슈, 더우인) 유행어. 探店博主 = 맛집 리뷰 인플루언서","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81d2-beff-c6e57949d9d9","표현":"摊位 (tān wèi)","언어":"🇨🇳 중국어","뜻":"노점, 부스, 매대","예문":"夜市有很多摊位。(야시장에 노점이 많다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"노점 표현 중 가장 일반적. 摊点보다 더 자주 쓰임","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8125-a719-ff23ebc20600","표현":"档口 (dàng kǒu)","언어":"🇨🇳 중국어","뜻":"시장·푸드코트 안의 작은 매장, 판매 코너","예문":"这个档口卖海鲜。(이 매장은 해산물을 판다.)","카테고리":["음식"],"난이도":"⭐⭐ 중급","메모":"广东 방언에서 온 표현. 시장이나 푸드코트 안 독립 매장을 가리킬 때 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c8-b273-f7545a77734f","표현":"摊点 (tāndiǎn)","언어":"🇨🇳 중국어","뜻":"노점, 가판대, 노점 영업 장소","예문":"这里有很多摊点。(여기 노점이 많아.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"摊位보다 덜 쓰이지만 같은 의미","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811d-8a5b-f85740d54f06","표현":"店铺 (diànpù)","언어":"🇨🇳 중국어","뜻":"가게, 상점","예문":"他开了一家店铺。(그는 가게를 하나 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"商店보다 구어적. 온라인 쇼핑몰도 店铺라고 부름","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8167-a5b3-c511c819bff8","표현":"小店 (xiǎodiàn)","언어":"🇨🇳 중국어","뜻":"작은 가게, 소규모 점포","예문":"我开了一家小店。(나는 작은 가게를 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"친근하고 소박한 뉘앙스. SNS에서 자기 가게를 겸손하게 부를 때도 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c1-be4b-f2823a80cf66","표현":"教导 (jiàodǎo)","언어":"🇨🇳 중국어","뜻":"가르치다, 지도하다","예문":"老师耐心地教导学生。(선생님이 학생들을 인내심 있게 가르친다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"단순 teach보다 인격적 지도 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811a-822d-f52be3c56a3c","표현":"家教 (jiājiào)","언어":"🇨🇳 중국어","뜻":"개인 과외 선생님 / 가정교육","예문":"我请了一个家教帮孩子补课。(아이 보충수업을 위해 과외 선생님을 구했다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"맥락에 따라 '과외 선생님'과 '가정교육(예의범절)' 두 가지 뜻","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-8cc7-e20cef7e4c9a","표현":"辅导老师 (fǔdǎo lǎoshī)","언어":"🇨🇳 중국어","뜻":"튜터, 지도교사","예문":"辅导老师每周来两次。(지도교사가 일주일에 두 번 온다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"家教보다 공식적인 느낌. 학원 선생님·멘토에도 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-b95a-e5be8e9e406c","표현":"轮班工作 (lúnbān gōngzuò)","언어":"🇨🇳 중국어","뜻":"교대근무를 하다","예문":"我在轮班工作。(저는 교대근무를 하고 있습니다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"파일럿·간호사 등 직업 얘기할 때 자주 쓸 표현","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8164-9fe9-fcc248a4d0b4","표현":"地勤 (dìqín)","언어":"🇨🇳 중국어","뜻":"지상직, 공항 지상근무 직원","예문":"她是机场的地勤人员。(그녀는 공항 지상직 직원이다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"航空 관련 대화에서 자주 나오는 단어. 飞行员(파일럿)과 대비되는 개념","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812a-b6d2-efdc20efcd81","표현":"通勤 (tōngqín)","언어":"🇨🇳 중국어","뜻":"통근하다","예문":"我每天坐地铁通勤。(저는 매일 지하철로 통근합니다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"通勤时间 = 출퇴근 시간. 通勤族 = 출퇴근하는 직장인","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811e-bdab-d229a99a809c","표현":"禽兽 (qínshòu)","언어":"🇨🇳 중국어","뜻":"금수, 짐승 (욕설로 사용)","예문":"他真是个禽兽！(그는 정말 짐승 같은 놈이야!)","카테고리":["감정"],"난이도":"⭐⭐ 중급","메모":"원래 뜻은 날짐승과 들짐승이지만 욕설로 많이 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8114-b84c-feea893e6f41","표현":"禽兽不如 (qínshòu bùrú)","언어":"🇨🇳 중국어","뜻":"금수만도 못하다","예문":"你简直禽兽不如！(너는 정말 금수만도 못해!)","카테고리":["감정"],"난이도":"⭐⭐⭐ 고급","메모":"강한 비난 표현. 영화·드라마에서 자주 등장","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8187-b800-c53af807e2e9","표현":"飞禽走兽 (fēiqín zǒushòu)","언어":"🇨🇳 중국어","뜻":"날짐승과 들짐승, 온갖 동물","예문":"山里有各种飞禽走兽。(산속에는 온갖 동물이 있다.)","카테고리":["기타"],"난이도":"⭐⭐⭐ 고급","메모":"4자 성어(成语). 禽兽와 함께 세트로 알아두기","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8146-8da5-e7ab97519aa9","표현":"兼职 (jiānzhí)","언어":"🇨🇳 중국어","뜻":"아르바이트, 부업, 겸직하다","예문":"我周末做兼职。(저는 주말에 부업을 합니다.)","카테고리":["비즈니스"],"난이도":"⭐ 초급","메모":"打工보다 정식 느낌. 做兼职 = 부업하다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8100-a34a-d2009f3922f8","표현":"盈亏 (yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익 (이익과 손실)","예문":"今年公司的盈亏情况怎么样？(올해 회사 손익 상황이 어떻습니까?)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"盈 = 이익, 亏 = 손실. 비즈니스/투자 대화에서 자주 등장","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81a9-bddd-d6ff188dca5d","표현":"自负盈亏 (zìfù yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익을 스스로 책임지다, 자영업/독립채산제","예문":"他辞职后自负盈亏，开了家咖啡店。(그는 퇴직 후 자영업으로 카페를 열었다.)","카테고리":["비즈니스"],"난이도":"⭐⭐⭐ 고급","메모":"창업/프리랜서 얘기할 때 자주 쓰는 4자 표현","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81bf-93ff-caab695cf991","표현":"赚钱 (zhuànqián)","언어":"🇨🇳 중국어","뜻":"돈을 벌다","예문":"他靠投资赚钱。(그는 투자로 돈을 번다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赔钱과 반대 쌍으로 외우기. 很赚钱 = 돈이 잘 벌린다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812b-a636-f522ae2d652d","표현":"赔钱 (péiqián)","언어":"🇨🇳 중국어","뜻":"돈을 잃다, 손해보다","예문":"这次投资赔钱了。(이번 투자에서 손해 봤어.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赚钱의 반대. 赔了很多钱 = 돈을 많이 잃었다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81cf-8d3f-ca93d9dace18","표현":"年年有余 (niánnián yǒuyú)","언어":"🇨🇳 중국어","뜻":"해마다 풍족하다 (새해 덕담)","예문":"祝你年年有余！(해마다 풍족하길 바랍니다!)","카테고리":["인사"],"난이도":"⭐⭐ 중급","메모":"중국 신년 대표 덕담. 余와 魚(물고기)가 동음이라 물고기 그림과 함께 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812c-b34b-e43ff4d64ced","표현":"总共有几个人？(zǒnggòng yǒu jǐ gè rén)","언어":"🇨🇳 중국어","뜻":"총 몇 명입니까?","예문":"你们总共有几个人？(너네 총 몇 명이야?)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"식당·예약할 때 자주 쓰는 실용 표현. 总共 = 합계, 도합","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8169-809a-e687683dddc0","표현":"被坑 (bèi kēng)","언어":"🇨🇳 중국어","뜻":"당하다, 사기당하다, 함정에 빠지다","예문":"我被坑了！(나 당했어!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"坑 = 구덩이. 被 = 피동. 구어체에서 매우 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-87bd-f316cd176d12","표현":"冤大头 (yuān dàtóu)","언어":"🇨🇳 중국어","뜻":"호구, 봉, 억울하게 큰돈 쓰는 사람","예문":"别把我当冤大头！(나를 호구로 보지 마!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"冤 = 억울하다, 大头 = 큰 부담. 바가지 쓰는 상황에서 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c9-9f97-cb4307c28b7a","표현":"调侃 (tiáokǎn)","언어":"🇨🇳 중국어","뜻":"놀리다, 농담하다, 빈정대다","예문":"别调侃我了。(그만 놀려.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"악의 없는 장난/놀림. SNS 댓글에서 자주 등장. 嘲讽보다 가벼운 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-815d-ab54-f7ea8e2dc8c9","표현":"避开 (bìkāi)","언어":"🇨🇳 중국어","뜻":"피하다, 비켜가다","예문":"避开高峰期出行更轻松。(피크타임을 피해서 이동하면 더 편하다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"回避보다 물리적으로 피하는 느낌이 강함","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8156-a32c-f961b331d819","표현":"规避风险 (guībì fēngxiǎn)","언어":"🇨🇳 중국어","뜻":"리스크를 관리하다, 위험을 회피하다","예문":"投资最重要的是规避风险。(투자에서 가장 중요한 것은 리스크 관리다.)","카테고리":["비즈니스"],"난이도":"⭐⭐⭐ 고급","메모":"투자·비즈니스 대화 필수 표현. 단순 避开보다 전략적 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-816b-9d2d-fa2df91953bf","표현":"直面现实 (zhímiàn xiànshí)","언어":"🇨🇳 중국어","뜻":"현실을 직시하다","예문":"不要回避问题，要直面现实。(문제를 회피하지 말고 현실을 직시해야 한다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"동기부여/조언 대화에서 자주 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-819a-b41e-c56402e9a2bc","표현":"高峰期 (gāofēngqī)","언어":"🇨🇳 중국어","뜻":"성수기, 피크타임, 러시아워","예문":"避开高峰期出行。(피크타임을 피해서 이동해.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"淡季의 반대. 교통/여행/비즈니스 모두에서 사용. 早晚高峰 = 아침저녁 러시아워","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81b6-825a-cc2daaa04e6b","표현":"淡季 (dànjì)","언어":"🇨🇳 중국어","뜻":"비수기","예문":"淡季旅游更便宜。(비수기에 여행하면 더 저렴하다.)","카테고리":["여행"],"난이도":"⭐⭐ 중급","메모":"高峰期/旺季의 반대. 旅游淡季 = 여행 비수기","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"}];
+
+  let expressions = [];
+  let reviewQueue = [];
+  let reviewIndex = 0;
+  let currentFilter = 'all';
+
+  // ── Firebase I/O ──────────────────────────────────────────
+
+  function getFirebaseUrl() {
+    const url = localStorage.getItem('firebase_url') || FIREBASE_URL;
+    return url === 'YOUR_FIREBASE_URL_HERE' ? null : url;
+  }
+
+  async function loadExpressions() {
+    const url = getFirebaseUrl();
+    if (!url) {
+      expressions = [...SEED_DATA];
+      showSetupBanner();
+      return;
+    }
+    const r = await fetch(`${url}/expressions.json`);
+    if (!r.ok) throw new Error(`Firebase 오류: ${r.status}`);
+    const data = await r.json();
+    if (data && Array.isArray(data) && data.length > 0) {
+      expressions = data;
+    } else {
+      // 첫 실행: 시드 데이터 저장
+      expressions = [...SEED_DATA];
+      await persistExpressions();
+    }
+  }
+
+  async function persistExpressions() {
+    const url = getFirebaseUrl();
+    if (!url) {
+      // Firebase 없으면 localStorage에만 저장
+      localStorage.setItem('expressions_local', JSON.stringify(expressions));
+      return;
+    }
+    const r = await fetch(`${url}/expressions.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(expressions)
+    });
+    if (!r.ok) throw new Error(`저장 실패: ${r.status}`);
+  }
+
+  // ── Setup Banner ──────────────────────────────────────────
+
+  function showSetupBanner() {
+    const banner = document.createElement('div');
+    banner.className = 'setup-banner';
+    banner.id = 'setup-banner';
+    banner.innerHTML = `
+      <h3>⚙️ Firebase 설정 필요</h3>
+      <p>그룹원과 데이터를 공유하려면 Firebase URL을 입력하세요.<br>
+      설정하지 않으면 이 기기에서만 저장됩니다.</p>
+      <input type="text" id="firebase-url-input" placeholder="https://your-project-default-rtdb.firebaseio.com" />
+      <button class="btn btn-primary btn-full" onclick="saveFirebaseUrl()">저장</button>
+    `;
+    document.getElementById('tab-review').insertBefore(banner, document.getElementById('review-content'));
+  }
+
+  function saveFirebaseUrl() {
+    const val = document.getElementById('firebase-url-input').value.trim().replace(/\/$/, '');
+    if (!val.startsWith('https://')) { showToast('올바른 URL을 입력하세요'); return; }
+    localStorage.setItem('firebase_url', val);
+    document.getElementById('setup-banner')?.remove();
+    showToast('✅ Firebase 연결 완료! 데이터 업로드 중...');
+    persistExpressions().then(() => showToast('✅ 데이터 공유 시작!')).catch(e => showToast('연결 실패: ' + e.message));
+  }
+
+  // ── Spaced repetition ──────────────────────────────────
+
+  function today() { return new Date().toISOString().slice(0,10); }
+  function isDue(e) { return !e.다음복습 || e.다음복습 <= today(); }
+
+  function calcNextReview(reviewCount, correct) {
+    const d = new Date();
+    if (!correct) { d.setDate(d.getDate() + 1); return d.toISOString().slice(0,10); }
+    const days = Math.min(Math.pow(2, reviewCount), 30);
+    d.setDate(d.getDate() + Math.round(days));
+    return d.toISOString().slice(0,10);
+  }
+
+  // ── Tab nav ──────────────────────────────────────────────
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (btn) btn.classList.add('active');
+    if (tab === 'list') renderList();
+  }
+
+  // ── Review ────────────────────────────────────────────────
+
+  function renderReview() {
+    reviewQueue = expressions.filter(e => !e.완전암기 && isDue(e));
+    reviewIndex = 0;
+    updateStats();
+
+    if (reviewQueue.length === 0) {
+      document.getElementById('review-content').innerHTML = `
+        <div class="review-done">
+          <div class="done-emoji">🎉</div>
+          <div class="done-title">오늘 복습 완료!</div>
+          <div class="done-sub">복습할 표현이 없어요.<br>새 표현을 추가해볼까요?</div>
+          <button class="btn btn-primary" onclick="switchTab('add', document.querySelectorAll('.nav-btn')[1])">➕ 표현 추가하기</button>
+        </div>`;
+      return;
+    }
+    showCard();
+  }
+
+  function showCard() {
+    if (reviewIndex >= reviewQueue.length) {
+      document.getElementById('review-content').innerHTML = `
+        <div class="review-done">
+          <div class="done-emoji">🏆</div>
+          <div class="done-title">모두 완료!</div>
+          <div class="done-sub">${reviewQueue.length}개 표현을 복습했어요.</div>
+          <button class="btn btn-secondary" onclick="renderReview()">다시 보기</button>
+        </div>`;
+      return;
+    }
+    const e = reviewQueue[reviewIndex];
+    const pct = Math.round((reviewIndex / reviewQueue.length) * 100);
+    document.getElementById('review-content').innerHTML = `
+      <div class="progress-wrap">
+        <div class="progress-label"><span>${reviewIndex + 1} / ${reviewQueue.length}</span><span>${pct}%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="card-container">
+        <div class="card" id="flashcard" onclick="flipCard()">
+          <div class="card-face card-front">
+            <div class="card-lang">${e.언어} &nbsp; ${e.난이도 || ''}</div>
+            <div class="card-expression">${e.표현}</div>
+            <div class="card-hint">탭하여 뜻 확인 👆</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-meaning">${e.뜻}</div>
+            ${e.예문 ? `<div class="card-example">${e.예문}</div>` : ''}
+            ${e.메모 ? `<div class="card-memo">💡 ${e.메모}</div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div id="review-btns" style="display:none">
+        <div class="review-btns">
+          <button class="btn btn-wrong" onclick="reviewAnswer(false)">❌ 몰라요</button>
+          <button class="btn btn-correct" onclick="reviewAnswer(true)">✅ 알아요!</button>
+        </div>
+        <button class="btn btn-mastered" onclick="markMastered()">🏅 완전 암기 완료로 표시</button>
+      </div>`;
+  }
+
+  function flipCard() {
+    const c = document.getElementById('flashcard');
+    if (!c) return;
+    c.classList.toggle('flipped');
+    if (c.classList.contains('flipped')) document.getElementById('review-btns').style.display = 'block';
+  }
+
+  async function reviewAnswer(correct) {
+    const expr = reviewQueue[reviewIndex];
+    const idx = expressions.findIndex(e => e.id === expr.id);
+    if (idx !== -1) {
+      const cnt = correct ? (expressions[idx].복습횟수 || 0) + 1 : 0;
+      expressions[idx].복습횟수 = cnt;
+      expressions[idx].다음복습 = calcNextReview(cnt, correct);
+    }
+    reviewIndex++;
+    showCard();
+    persistExpressions().catch(console.error);
+  }
+
+  async function markMastered() {
+    const expr = reviewQueue[reviewIndex];
+    const idx = expressions.findIndex(e => e.id === expr.id);
+    if (idx !== -1) { expressions[idx].완전암기 = true; expressions[idx].다음복습 = null; }
+    showToast('🏅 암기 완료!');
+    reviewIndex++;
+    showCard();
+    persistExpressions().catch(console.error);
+  }
+
+  // ── Add ──────────────────────────────────────────────────
+
+  async function addExpression() {
+    const 표현 = document.getElementById('add-expr').value.trim();
+    const 뜻 = document.getElementById('add-meaning').value.trim();
+    const 언어 = document.getElementById('add-lang').value;
+    if (!표현 || !뜻) { showToast('표현과 뜻은 필수입니다'); return; }
+
+    const status = document.getElementById('add-status');
+    status.textContent = '💾 저장 중...';
+
+    const newExpr = {
+      id: 'u-' + Date.now(),
+      표현, 언어, 뜻,
+      예문: document.getElementById('add-example').value.trim(),
+      카테고리: document.getElementById('add-category').value,
+      난이도: document.getElementById('add-level').value,
+      메모: document.getElementById('add-memo').value.trim(),
+      복습횟수: 0, 완전암기: false, 다음복습: today(), 추가날짜: today()
+    };
+
+    try {
+      expressions.push(newExpr);
+      await persistExpressions();
+      ['add-expr','add-meaning','add-example','add-memo'].forEach(id => document.getElementById(id).value = '');
+      status.textContent = '';
+      showToast('✅ 저장 완료!');
+      updateStats();
+    } catch (e) {
+      expressions.pop();
+      status.textContent = '저장 실패: ' + (e.message || '다시 시도해주세요');
+    }
+  }
+
+  // ── List ─────────────────────────────────────────────────
+
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderList();
+  }
+
+  function renderList() {
+    let list = [...expressions];
+    if (currentFilter === 'cn') list = list.filter(e => e.언어.includes('중국어'));
+    else if (currentFilter === 'jp') list = list.filter(e => e.언어.includes('일본어'));
+    else if (currentFilter === 'due') list = list.filter(e => !e.완전암기 && isDue(e));
+    else if (currentFilter === 'mastered') list = list.filter(e => e.완전암기);
+
+    if (!list.length) {
+      document.getElementById('list-content').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>표현이 없습니다</p></div>`;
+      return;
+    }
+    document.getElementById('list-content').innerHTML = list.map(e => {
+      const langClass = e.언어.includes('중국어') ? 'badge-cn' : 'badge-jp';
+      const isOverdue = !e.완전암기 && isDue(e);
+      return `<div class="expr-card">
+        <div class="expr-card-top">
+          <span class="badge ${langClass}">${e.언어}</span>
+          ${isOverdue ? '<span class="badge badge-due">📅 복습 필요</span>' : ''}
+          ${e.완전암기 ? '<span class="badge badge-done">✅ 암기완료</span>' : ''}
+        </div>
+        <div class="expr-title">${e.표현}</div>
+        <div class="expr-meaning">${e.뜻}</div>
+        ${e.예문 ? `<div class="expr-example">${e.예문}</div>` : ''}
+        <div class="expr-tags">
+          ${Array.isArray(e.카테고리) ? e.카테고리.map(c=>`<span class="tag">${c}</span>`).join('') : e.카테고리 ? `<span class="tag">${e.카테고리}</span>` : ''}
+          ${e.난이도 ? `<span class="tag">${e.난이도}</span>` : ''}
+          <span class="tag">복습 ${e.복습횟수 || 0}회</span>
+        </div>
+        ${e.메모 ? `<div class="expr-memo">💡 ${e.메모}</div>` : ''}
+        <div class="expr-footer">추가: ${e.추가날짜 || '-'} ${e.다음복습 ? '· 다음복습: ' + e.다음복습 : ''}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Utils ────────────────────────────────────────────────
+
+  function updateStats() {
+    const due = expressions.filter(e => !e.완전암기 && isDue(e)).length;
+    const total = expressions.length;
+    const mastered = expressions.filter(e => e.완전암기).length;
+    document.getElementById('headerStats').textContent = `총 ${total}개 · 오늘 ${due}개 · 완료 ${mastered}개`;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // ── Init ─────────────────────────────────────────────────
+
+  (async () => {
+    try {
+      await loadExpressions();
+      renderReview();
+      updateStats();
+    } catch (err) {
+      document.getElementById('review-content').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <p>데이터를 불러오지 못했습니다.<br><small style="color:#ddd">${err.message}</small></p>
+        </div>`;
+    }
+  })();
+</script>
+</body>
+</html>
