@@ -21,7 +21,7 @@
     .section.active { display: block; }
 
     /* Flashcard */
-    .card-container { perspective: 1000px; margin: 8px auto 16px; max-width: 380px; }
+    .card-container { perspective: 1000px; margin: 8px auto 8px; max-width: 380px; }
     .card { width: 100%; height: 220px; position: relative; transform-style: preserve-3d; transition: transform 0.45s; cursor: pointer; }
     .card.flipped { transform: rotateY(180deg); }
     .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; box-shadow: 0 4px 24px rgba(108,99,255,0.15); }
@@ -33,6 +33,9 @@
     .card-meaning { font-size: 20px; font-weight: 700; color: #2d2d44; margin-bottom: 8px; }
     .card-example { font-size: 13px; color: #666; font-style: italic; line-height: 1.4; }
     .card-memo { font-size: 11px; color: #aaa; margin-top: 8px; line-height: 1.3; }
+    .card-tts-row { display: flex; justify-content: center; max-width: 380px; margin: 0 auto 6px; }
+    .card-tts-btn { background: none; border: none; font-size: 22px; cursor: pointer; opacity: 0.6; transition: opacity 0.15s; padding: 4px 8px; }
+    .card-tts-btn:hover { opacity: 1; }
 
     .progress-wrap { max-width: 380px; margin: 0 auto 4px; }
     .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #aaa; margin-bottom: 6px; }
@@ -62,18 +65,26 @@
     .section-sub { font-size: 13px; color: #999; margin-bottom: 18px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    /* List */
+    /* List & Search */
+    .search-wrap { margin-bottom: 12px; position: relative; }
+    .search-input { width: 100%; padding: 9px 13px 9px 36px; border: 1.5px solid #e4e4e4; border-radius: 20px; font-size: 14px; outline: none; font-family: inherit; background: white; transition: border-color 0.2s; }
+    .search-input:focus { border-color: #6c63ff; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #bbb; pointer-events: none; }
     .filter-bar { display: flex; gap: 7px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
     .filter-bar::-webkit-scrollbar { display: none; }
-    .filter-btn { padding: 6px 13px; border: 1.5px solid #e4e4e4; border-radius: 100px; background: white; cursor: pointer; font-size: 12px; white-space: nowrap; transition: all 0.15px; font-weight: 500; }
+    .filter-btn { padding: 6px 13px; border: 1.5px solid #e4e4e4; border-radius: 100px; background: white; cursor: pointer; font-size: 12px; white-space: nowrap; font-weight: 500; }
     .filter-btn.active { border-color: #6c63ff; background: #6c63ff; color: white; }
-    .expr-card { background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
-    .expr-card-top { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
     .badge { font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 600; }
     .badge-cn { background: #ffe0e0; color: #c00; }
     .badge-jp { background: #dde8ff; color: #3a5; }
     .badge-due { background: #fff3cd; color: #856404; }
     .badge-done { background: #d4edda; color: #155724; }
+    .expr-card { background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+    .expr-card-top { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
+    .expr-card-top-right { margin-left: auto; display: flex; gap: 2px; }
+    .expr-action-btn { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px 5px; border-radius: 7px; color: #ccc; transition: all 0.15s; line-height: 1; }
+    .expr-action-btn:hover { background: #f5f5f5; color: #888; }
+    .expr-action-btn.bookmarked { color: #f5c518; }
     .expr-title { font-size: 19px; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
     .expr-meaning { font-size: 14px; color: #555; margin-bottom: 5px; }
     .expr-example { font-size: 12px; color: #888; font-style: italic; margin-bottom: 6px; line-height: 1.4; }
@@ -102,6 +113,17 @@
     .done-emoji { font-size: 60px; margin-bottom: 14px; }
     .done-title { font-size: 21px; font-weight: 700; margin-bottom: 8px; }
     .done-sub { font-size: 14px; color: #888; line-height: 1.5; margin-bottom: 20px; }
+
+    /* Stats card */
+    .stats-card { background: white; border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 24px; font-weight: 700; color: #6c63ff; }
+    .stat-label { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .stat-bar-row { margin-top: 14px; }
+    .stat-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 4px; }
+    .stat-bar { background: #eee; border-radius: 100px; height: 6px; }
+    .stat-bar-fill { height: 100%; border-radius: 100px; transition: width 0.5s; }
 
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: #2d2d44; color: white; padding: 10px 20px; border-radius: 100px; font-size: 13px; font-weight: 500; opacity: 0; transition: all 0.28s cubic-bezier(.21,1.02,.73,1); z-index: 999; white-space: nowrap; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -150,7 +172,6 @@
     .chat-send-btn { width: 40px; height: 40px; border-radius: 50%; background: #6c63ff; color: white; border: none; cursor: pointer; font-size: 20px; line-height: 1; flex-shrink: 0; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
     .chat-send-btn:hover { background: #5a52d5; }
     .chat-send-btn:disabled { background: #ccc; cursor: not-allowed; }
-
     .img-attach-btn { width: 36px; height: 36px; background: #f0f0f0; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; flex-shrink: 0; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
     .img-attach-btn:hover { background: #e0e0e0; }
     .bubble-img { max-width: 100%; max-height: 200px; border-radius: 10px; margin-bottom: 6px; display: block; }
@@ -184,7 +205,6 @@
 <div id="tab-add" class="section">
   <div class="section-title">새 표현 추가</div>
   <div class="section-sub">모임에서 배운 표현을 기록하세요</div>
-
   <div class="form-group">
     <label class="form-label">언어 *</label>
     <select id="add-lang" class="form-control">
@@ -227,7 +247,6 @@
     <label class="form-label">메모</label>
     <textarea id="add-memo" class="form-control" placeholder="뉘앙스, 사용 상황 등 메모 (선택)"></textarea>
   </div>
-
   <button class="btn btn-primary btn-full" onclick="addExpression()">저장 💾</button>
   <div id="add-status"></div>
 </div>
@@ -235,12 +254,17 @@
 <!-- 전체 목록 탭 -->
 <div id="tab-list" class="section">
   <div class="section-title">전체 표현</div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="list-search" placeholder="표현, 뜻, 예문 검색..." oninput="setSearch(this.value)">
+  </div>
   <div class="filter-bar">
     <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
     <button class="filter-btn" onclick="setFilter('cn',this)">🇨🇳 중국어</button>
     <button class="filter-btn" onclick="setFilter('jp',this)">🇯🇵 일본어</button>
     <button class="filter-btn" onclick="setFilter('due',this)">📅 복습 필요</button>
     <button class="filter-btn" onclick="setFilter('mastered',this)">✅ 암기완료</button>
+    <button class="filter-btn" onclick="setFilter('bookmark',this)">⭐ 즐겨찾기</button>
   </div>
   <div id="list-content">
     <div class="loading-wrap"><div class="spinner"></div></div>
@@ -249,7 +273,6 @@
 
 <!-- AI 채팅 탭 -->
 <div id="tab-chat" class="section">
-  <!-- API 키 없을 때 -->
   <div id="chat-apikey-section" class="chat-apikey-wrap">
     <div class="section-title">💬 AI 언어 도우미</div>
     <div class="section-sub">중국어·일본어 표현을 물어보고 단어장에 추가하세요</div>
@@ -263,7 +286,6 @@
     </div>
   </div>
 
-  <!-- 채팅 UI -->
   <div id="chat-ui-wrap" class="chat-ui-wrap" style="display:none">
     <div class="chat-toolbar">
       <button class="chat-tool-btn" onclick="resetChat()">🗑️ 대화 초기화</button>
@@ -299,6 +321,7 @@
   let reviewQueue = [];
   let reviewIndex = 0;
   let currentFilter = 'all';
+  let searchQuery = '';
 
   // ── Firebase ──────────────────────────────────────────────
 
@@ -344,7 +367,7 @@
     return { ...expr, ...p };
   }
 
-  // ── Spaced repetition ──────────────────────────────────────
+  // ── Spaced repetition ─────────────────────────────────────
 
   function today() { return new Date().toISOString().slice(0,10); }
   function isDue(e) { return !e.완전암기 || e.다음복습 <= today(); }
@@ -355,6 +378,18 @@
     const days = Math.min(Math.pow(2, reviewCount), 30);
     d.setDate(d.getDate() + Math.round(days));
     return d.toISOString().slice(0,10);
+  }
+
+  // ── TTS ───────────────────────────────────────────────────
+
+  function speak(text, lang) {
+    if (!window.speechSynthesis) { showToast('이 브라우저는 TTS를 지원하지 않아요'); return; }
+    speechSynthesis.cancel();
+    const clean = text.replace(/\s*\([^)]*\)/g, '').trim(); // 괄호 안 발음 기호 제거
+    const u = new SpeechSynthesisUtterance(clean);
+    u.lang = lang.includes('중국어') ? 'zh-CN' : 'ja-JP';
+    u.rate = 0.85;
+    speechSynthesis.speak(u);
   }
 
   // ── Tab nav ───────────────────────────────────────────────
@@ -377,7 +412,27 @@
     updateStats();
 
     if (reviewQueue.length === 0) {
+      const total = expressions.length;
+      const mastered = merged.filter(e => e.완전암기).length;
+      const cn = expressions.filter(e => e.언어.includes('중국어')).length;
+      const jp = expressions.filter(e => e.언어.includes('일본어')).length;
       document.getElementById('review-content').innerHTML = `
+        <div class="stats-card">
+          <div style="font-size:15px;font-weight:700;color:#1a1a2e">📊 내 학습 현황</div>
+          <div class="stats-grid">
+            <div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">전체 표현</div></div>
+            <div class="stat-item"><div class="stat-num" style="color:#2f9e44">${mastered}</div><div class="stat-label">암기 완료</div></div>
+            <div class="stat-item"><div class="stat-num" style="color:#e67e22">${total - mastered}</div><div class="stat-label">학습 중</div></div>
+          </div>
+          <div class="stat-bar-row">
+            <div class="stat-bar-label"><span>🇨🇳 중국어 ${cn}개</span><span>🇯🇵 일본어 ${jp}개</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:${total ? (cn/total*100) : 0}%;background:#e53e3e"></div></div>
+          </div>
+          <div class="stat-bar-row" style="margin-top:10px">
+            <div class="stat-bar-label"><span>암기 완료</span><span>${total ? Math.round(mastered/total*100) : 0}%</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:${total ? (mastered/total*100) : 0}%;background:#2f9e44"></div></div>
+          </div>
+        </div>
         <div class="review-done">
           <div class="done-emoji">🎉</div>
           <div class="done-title">오늘 복습 완료!</div>
@@ -402,6 +457,8 @@
     }
     const e = reviewQueue[reviewIndex];
     const pct = Math.round((reviewIndex / reviewQueue.length) * 100);
+    const exprEscaped = e.표현.replace(/'/g, "\\'");
+    const langEscaped = e.언어.replace(/'/g, "\\'");
     document.getElementById('review-content').innerHTML = `
       <div class="progress-wrap">
         <div class="progress-label"><span>${reviewIndex + 1} / ${reviewQueue.length}</span><span>${pct}%</span></div>
@@ -420,6 +477,9 @@
             ${e.메모 ? `<div class="card-memo">💡 ${e.메모}</div>` : ''}
           </div>
         </div>
+      </div>
+      <div class="card-tts-row">
+        <button class="card-tts-btn" onclick="speak('${exprEscaped}','${langEscaped}')" title="발음 듣기">🔊</button>
       </div>
       <div id="review-btns" style="display:none">
         <div class="review-btns">
@@ -441,7 +501,7 @@
     const expr = reviewQueue[reviewIndex];
     const p = progress[expr.id] || { 복습횟수: 0, 완전암기: false };
     const cnt = correct ? (p.복습횟수 || 0) + 1 : 0;
-    progress[expr.id] = { 복습횟수: cnt, 완전암기: false, 다음복습: calcNextReview(cnt, correct) };
+    progress[expr.id] = { ...progress[expr.id], 복습횟수: cnt, 완전암기: false, 다음복습: calcNextReview(cnt, correct) };
     saveProgress();
     reviewIndex++;
     showCard();
@@ -449,7 +509,7 @@
 
   function markMastered() {
     const expr = reviewQueue[reviewIndex];
-    progress[expr.id] = { 복습횟수: (progress[expr.id]?.복습횟수 || 0), 완전암기: true, 다음복습: null };
+    progress[expr.id] = { ...progress[expr.id], 복습횟수: (progress[expr.id]?.복습횟수 || 0), 완전암기: true, 다음복습: null };
     saveProgress();
     showToast('🏅 암기 완료!');
     reviewIndex++;
@@ -492,7 +552,12 @@
     }
   }
 
-  // ── List ──────────────────────────────────────────────────
+  // ── List (Search + Filter + Bookmark + Delete) ────────────
+
+  function setSearch(q) {
+    searchQuery = q;
+    renderList();
+  }
 
   function setFilter(f, btn) {
     currentFilter = f;
@@ -501,25 +566,71 @@
     renderList();
   }
 
+  function toggleBookmark(id) {
+    if (!progress[id]) progress[id] = { 복습횟수: 0, 완전암기: false, 다음복습: today() };
+    progress[id].bookmark = !progress[id].bookmark;
+    saveProgress();
+    renderList();
+    showToast(progress[id].bookmark ? '⭐ 즐겨찾기 추가!' : '즐겨찾기 해제');
+  }
+
+  async function deleteExpression(id) {
+    if (!confirm('이 표현을 삭제하시겠습니까?')) return;
+    expressions = expressions.filter(e => e.id !== id);
+    try {
+      await saveExpressionsToFirebase();
+      delete progress[id];
+      saveProgress();
+      renderList();
+      updateStats();
+      showToast('🗑️ 삭제됐어요');
+    } catch (err) {
+      showToast('삭제 실패: ' + err.message);
+    }
+  }
+
   function renderList() {
     let list = expressions.map(getMerged);
+
+    // 검색 필터
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(e =>
+        (e.표현 || '').toLowerCase().includes(q) ||
+        (e.뜻 || '').toLowerCase().includes(q) ||
+        (e.예문 || '').toLowerCase().includes(q) ||
+        (e.메모 || '').toLowerCase().includes(q)
+      );
+    }
+
+    // 카테고리 필터
     if (currentFilter === 'cn') list = list.filter(e => e.언어.includes('중국어'));
     else if (currentFilter === 'jp') list = list.filter(e => e.언어.includes('일본어'));
     else if (currentFilter === 'due') list = list.filter(e => !e.완전암기 && isDue(e));
     else if (currentFilter === 'mastered') list = list.filter(e => e.완전암기);
+    else if (currentFilter === 'bookmark') list = list.filter(e => e.bookmark);
 
     if (!list.length) {
-      document.getElementById('list-content').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>표현이 없습니다</p></div>`;
+      document.getElementById('list-content').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>${searchQuery ? '검색 결과가 없습니다' : '표현이 없습니다'}</p></div>`;
       return;
     }
+
     document.getElementById('list-content').innerHTML = list.map(e => {
       const langClass = e.언어.includes('중국어') ? 'badge-cn' : 'badge-jp';
       const isOverdue = !e.완전암기 && isDue(e);
+      const isBookmarked = !!e.bookmark;
+      const exprEsc = e.표현.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const langEsc = e.언어.replace(/'/g, "\\'");
       return `<div class="expr-card">
         <div class="expr-card-top">
           <span class="badge ${langClass}">${e.언어}</span>
           ${isOverdue ? '<span class="badge badge-due">📅 복습 필요</span>' : ''}
           ${e.완전암기 ? '<span class="badge badge-done">✅ 암기완료</span>' : ''}
+          <div class="expr-card-top-right">
+            <button class="expr-action-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${e.id}')" title="즐겨찾기">⭐</button>
+            <button class="expr-action-btn" onclick="speak('${exprEsc}','${langEsc}')" title="발음 듣기">🔊</button>
+            <button class="expr-action-btn" onclick="deleteExpression('${e.id}')" title="삭제" style="color:#ffb3b3">🗑️</button>
+          </div>
         </div>
         <div class="expr-title">${e.표현}</div>
         <div class="expr-meaning">${e.뜻}</div>
@@ -593,7 +704,7 @@
   let chatHistory = [];
   const chatExprStore = {};
   let chatInited = false;
-  let pendingImage = null; // { data: base64, mediaType: string, previewUrl: string }
+  let pendingImage = null;
 
   function initChat() {
     const key = localStorage.getItem('anthropic_api_key');
@@ -643,7 +754,14 @@
   }
 
   function showWelcomeChatMsg() {
-    appendChatBubble('assistant', '안녕하세요! 중국어나 일본어 표현에 대해 뭐든 물어보세요 😊\n\n예시:\n• "화가 났을 때 쓰는 중국어 표현 알려줘"\n• "비즈니스 일본어 이메일 인사말은?"\n• "오늘 배운 단어: 探店 — 비슷한 표현 더 있어?"\n\n관련 표현에 체크하면 단어장에 바로 추가할 수 있어요!');
+    appendChatBubble('assistant', '안녕하세요! 중국어나 일본어 표현에 대해 뭐든 물어보세요 😊\n\n예시:\n• "화가 났을 때 쓰는 중국어 표현 알려줘"\n• "비즈니스 일본어 이메일 인사말은?"\n• 📷 사진 찍어서 올리면 텍스트 인식해서 설명해줘요!\n\n관련 표현에 체크하면 단어장에 바로 추가할 수 있어요!');
+  }
+
+  function chatKeydown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChatMessage();
+    }
   }
 
   function handleImageSelect(event) {
@@ -664,13 +782,6 @@
     pendingImage = null;
     document.getElementById('img-preview-wrap').style.display = 'none';
     document.getElementById('img-preview').src = '';
-  }
-
-  function chatKeydown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendChatMessage();
-    }
   }
 
   function parseExprs(text) {
@@ -782,7 +893,6 @@
     input.value = '';
     input.style.height = 'auto';
 
-    // Build user content (text only or text+image)
     const imgSnap = pendingImage;
     let userContent;
     if (imgSnap) {
