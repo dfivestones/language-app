@@ -150,6 +150,10 @@
     .chat-send-btn { width: 40px; height: 40px; border-radius: 50%; background: #6c63ff; color: white; border: none; cursor: pointer; font-size: 20px; line-height: 1; flex-shrink: 0; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
     .chat-send-btn:hover { background: #5a52d5; }
     .chat-send-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    .img-attach-btn { width: 36px; height: 36px; background: #f0f0f0; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; flex-shrink: 0; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+    .img-attach-btn:hover { background: #e0e0e0; }
+    .bubble-img { max-width: 100%; max-height: 200px; border-radius: 10px; margin-bottom: 6px; display: block; }
   </style>
 </head>
 <body>
@@ -267,8 +271,18 @@
     </div>
     <div id="chat-messages" class="chat-messages"></div>
     <div class="chat-input-area">
-      <textarea id="chat-input" placeholder="중국어/일본어 표현에 대해 물어보세요..." onkeydown="chatKeydown(event)"></textarea>
-      <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="전송">↑</button>
+      <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0;gap:6px">
+        <div id="img-preview-wrap" style="display:none;position:relative;width:fit-content">
+          <img id="img-preview" style="max-height:72px;border-radius:10px;border:1.5px solid #e0dfff;display:block">
+          <button onclick="removeImage()" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;background:#e53e3e;color:white;border:none;border-radius:50%;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center">✕</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button class="img-attach-btn" onclick="document.getElementById('img-file-input').click()" title="사진 첨부">📷</button>
+          <textarea id="chat-input" placeholder="중국어/일본어 표현에 대해 물어보세요..." onkeydown="chatKeydown(event)" style="flex:1;resize:none;height:40px;max-height:100px;padding:9px 13px;border:1.5px solid #e4e4e4;border-radius:20px;font-size:14px;font-family:inherit;outline:none;line-height:1.4;overflow-y:auto;"></textarea>
+          <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="전송">↑</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -572,11 +586,14 @@
 - 난이도는 반드시 ⭐ 초급 / ⭐⭐ 중급 / ⭐⭐⭐ 고급 중 하나
 - 언어는 반드시 🇨🇳 중국어 또는 🇯🇵 일본어
 - 표현이 없는 일반 질문에는 [EXPR] 태그 생략 가능
-- 파이프(|) 구분자로 정확히 6개 항목`;
+- 파이프(|) 구분자로 정확히 6개 항목
+
+사진을 받으면: 사진 속 중국어/일본어 텍스트를 모두 인식하고 뜻·발음·뉘앙스를 설명한 뒤 [EXPR] 태그로 감싸주세요. 메뉴판, 간판, 책, 스크린샷 등 어떤 사진이든 처리하세요.`;
 
   let chatHistory = [];
   const chatExprStore = {};
   let chatInited = false;
+  let pendingImage = null; // { data: base64, mediaType: string, previewUrl: string }
 
   function initChat() {
     const key = localStorage.getItem('anthropic_api_key');
@@ -629,6 +646,26 @@
     appendChatBubble('assistant', '안녕하세요! 중국어나 일본어 표현에 대해 뭐든 물어보세요 😊\n\n예시:\n• "화가 났을 때 쓰는 중국어 표현 알려줘"\n• "비즈니스 일본어 이메일 인사말은?"\n• "오늘 배운 단어: 探店 — 비슷한 표현 더 있어?"\n\n관련 표현에 체크하면 단어장에 바로 추가할 수 있어요!');
   }
 
+  function handleImageSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      pendingImage = { data: dataUrl.split(',')[1], mediaType: file.type || 'image/jpeg', previewUrl: dataUrl };
+      document.getElementById('img-preview').src = dataUrl;
+      document.getElementById('img-preview-wrap').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }
+
+  function removeImage() {
+    pendingImage = null;
+    document.getElementById('img-preview-wrap').style.display = 'none';
+    document.getElementById('img-preview').src = '';
+  }
+
   function chatKeydown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -663,14 +700,15 @@
     return text.replace(/\[EXPR\][\s\S]*?\[\/EXPR\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
   }
 
-  function appendChatBubble(role, content, msgId) {
+  function appendChatBubble(role, content, msgId, imageUrl) {
     const exprs = (role === 'assistant' && msgId) ? parseExprs(content) : [];
     const cleanContent = cleanMsgText(content);
     const container = document.getElementById('chat-messages');
 
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${role}`;
-    bubble.innerHTML = `<div class="bubble-text">${cleanContent.replace(/\n/g, '<br>')}</div>`;
+    const imgHtml = imageUrl ? `<img src="${imageUrl}" class="bubble-img">` : '';
+    bubble.innerHTML = `<div class="bubble-text">${imgHtml}${cleanContent.replace(/\n/g, '<br>')}</div>`;
 
     if (exprs.length > 0) {
       chatExprStore[msgId] = exprs;
@@ -736,7 +774,7 @@
   async function sendChatMessage() {
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
-    if (!text) return;
+    if (!text && !pendingImage) return;
 
     const apiKey = localStorage.getItem('anthropic_api_key');
     if (!apiKey) { showToast('API 키가 없습니다'); return; }
@@ -744,8 +782,21 @@
     input.value = '';
     input.style.height = 'auto';
 
-    appendChatBubble('user', text);
-    chatHistory.push({ role: 'user', content: text });
+    // Build user content (text only or text+image)
+    const imgSnap = pendingImage;
+    let userContent;
+    if (imgSnap) {
+      userContent = [
+        { type: 'image', source: { type: 'base64', media_type: imgSnap.mediaType, data: imgSnap.data } },
+        { type: 'text', text: text || '이 사진의 중국어/일본어 표현을 인식하고 설명해줘' }
+      ];
+    } else {
+      userContent = text;
+    }
+
+    appendChatBubble('user', text || '📷', null, imgSnap?.previewUrl);
+    chatHistory.push({ role: 'user', content: userContent });
+    if (imgSnap) removeImage();
 
     const sendBtn = document.getElementById('chat-send-btn');
     sendBtn.disabled = true;
