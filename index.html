@@ -175,6 +175,19 @@
     .img-attach-btn { width: 36px; height: 36px; background: #f0f0f0; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; flex-shrink: 0; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
     .img-attach-btn:hover { background: #e0e0e0; }
     .bubble-img { max-width: 100%; max-height: 200px; border-radius: 10px; margin-bottom: 6px; display: block; }
+
+    /* ── 빠른 액션 칩 ─────────────────────────────────────── */
+    .quick-actions { display: flex; gap: 6px; overflow-x: auto; padding: 7px 12px 5px; -webkit-overflow-scrolling: touch; flex-shrink: 0; background: white; border-top: 1px solid #f0f0f0; }
+    .quick-actions::-webkit-scrollbar { display: none; }
+    .quick-chip { padding: 5px 13px; border: 1.5px solid #e4e4e4; border-radius: 100px; background: white; cursor: pointer; font-size: 12px; white-space: nowrap; color: #555; transition: all 0.15s; flex-shrink: 0; font-family: inherit; }
+    .quick-chip:hover { border-color: #6c63ff; color: #6c63ff; background: #f8f5ff; }
+    .quick-chip:active { transform: scale(0.95); }
+    /* ── 붙여넣기 감지 바 ─────────────────────────────────── */
+    .paste-bar { display: none; align-items: center; gap: 8px; padding: 6px 12px 5px; background: #f0edff; flex-shrink: 0; border-top: 1px solid #ddd8ff; }
+    .paste-bar-label { font-size: 12px; color: #6c63ff; font-weight: 600; flex: 1; }
+    .paste-bar-btn { padding: 4px 13px; border: 1.5px solid #6c63ff; border-radius: 100px; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.15s; }
+    .paste-bar-btn.fill { background: #6c63ff; color: white; }
+    .paste-bar-btn.outline { background: white; color: #6c63ff; }
   </style>
 </head>
 <body>
@@ -292,6 +305,20 @@
       <button class="chat-tool-btn" onclick="clearApiKey()">🔑 키 변경</button>
     </div>
     <div id="chat-messages" class="chat-messages"></div>
+    <div class="quick-actions">
+      <button class="quick-chip" onclick="quickAction('번역해줘')">🌐 번역</button>
+      <button class="quick-chip" onclick="quickAction('발음이랑 성조 알려줘')">🔊 발음</button>
+      <button class="quick-chip" onclick="quickAction('예문 3개 만들어줘')">📝 예문</button>
+      <button class="quick-chip" onclick="quickAction('자세히 분석해줘')">🔍 분석</button>
+      <button class="quick-chip" onclick="quickAction('비슷한 표현 알려줘')">🔗 유사 표현</button>
+      <button class="quick-chip" onclick="quickAction('단어장에 없는 새 표현 5개만 알려줘', true)">✨ 새 표현 추천</button>
+    </div>
+    <div class="paste-bar" id="paste-bar">
+      <span class="paste-bar-label">🀄 외국어 감지됨</span>
+      <button class="paste-bar-btn outline" onclick="pasteAction('번역')">번역</button>
+      <button class="paste-bar-btn fill" onclick="pasteAction('분석')">분석</button>
+      <button onclick="hidePasteBar()" style="background:none;border:none;cursor:pointer;color:#aaa;font-size:15px;padding:2px 5px;line-height:1">✕</button>
+    </div>
     <div class="chat-input-area">
       <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
       <div style="flex:1;display:flex;flex-direction:column;min-width:0;gap:6px">
@@ -684,6 +711,12 @@
 
   // ── AI Chat ───────────────────────────────────────────────
 
+  function getVocabContext() {
+    if (!expressions || !expressions.length) return '';
+    const list = expressions.slice(0, 100).map(e => e.표현).join(', ');
+    return `\n\n=== 사용자의 현재 단어장 (${expressions.length}개) ===\n${list}\n\n위 단어장에 이미 있는 표현이면 [이미 학습 중 ✓]으로 표시만 하고, 새로운 표현 위주로 [EXPR] 태그로 감싸서 추천해주세요.`;
+  }
+
   const CHAT_SYSTEM_PROMPT = `당신은 중국어/일본어 회화 모임을 위한 언어 학습 도우미입니다. 한국어로 친절하게 답변해주세요.
 
 사용자가 표현이나 단어에 대해 물어볼 때, 핵심 표현들을 반드시 아래 형식으로 포함해주세요:
@@ -719,6 +752,14 @@
           ta.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            if (!this.value.trim()) hidePasteBar();
+          });
+          ta.addEventListener('paste', function() {
+            setTimeout(() => {
+              if (/[぀-ヿ一-鿿豈-﫿]/.test(this.value)) {
+                showPasteBar();
+              }
+            }, 50);
           });
         }
       }
@@ -755,6 +796,47 @@
 
   function showWelcomeChatMsg() {
     appendChatBubble('assistant', '안녕하세요! 중국어나 일본어 표현에 대해 뭐든 물어보세요 😊\n\n예시:\n• "화가 났을 때 쓰는 중국어 표현 알려줘"\n• "비즈니스 일본어 이메일 인사말은?"\n• 📷 사진 찍어서 올리면 텍스트 인식해서 설명해줘요!\n\n관련 표현에 체크하면 단어장에 바로 추가할 수 있어요!');
+  }
+
+  // ── 빠른 액션 & 붙여넣기 감지 ─────────────────────────────
+
+  function quickAction(action, standalone) {
+    const input = document.getElementById('chat-input');
+    const current = input.value.trim();
+    hidePasteBar();
+    if (standalone) {
+      input.value = action;
+      sendChatMessage();
+    } else if (current) {
+      input.value = current + ' — ' + action;
+      sendChatMessage();
+    } else {
+      input.focus();
+      const orig = input.placeholder;
+      input.placeholder = action + '할 표현을 입력하세요...';
+      setTimeout(() => { input.placeholder = orig; }, 4000);
+    }
+  }
+
+  function showPasteBar() {
+    document.getElementById('paste-bar').style.display = 'flex';
+  }
+
+  function hidePasteBar() {
+    document.getElementById('paste-bar').style.display = 'none';
+  }
+
+  function pasteAction(type) {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    hidePasteBar();
+    if (!text) return;
+    if (type === '번역') {
+      input.value = text + ' — 한국어로 번역해줘';
+    } else {
+      input.value = text + ' — 자세히 분석해줘 (뜻, 발음, 뉘앙스, 예문 포함)';
+    }
+    sendChatMessage();
   }
 
   function chatKeydown(e) {
@@ -930,7 +1012,7 @@
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 2048,
-          system: CHAT_SYSTEM_PROMPT,
+          system: CHAT_SYSTEM_PROMPT + getVocabContext(),
           messages: chatHistory.map(m => ({ role: m.role, content: m.content }))
         })
       });
