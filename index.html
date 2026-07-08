@@ -14,7 +14,7 @@
     .header .stats { font-size: 11px; color: #999; }
 
     .nav { display: flex; background: white; border-bottom: 2px solid #f0f0f0; position: sticky; top: 49px; z-index: 9; }
-    .nav-btn { flex: 1; padding: 11px 4px; text-align: center; border: none; background: none; cursor: pointer; font-size: 13px; color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+    .nav-btn { flex: 1; padding: 11px 4px; text-align: center; border: none; background: none; cursor: pointer; font-size: 12px; color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
     .nav-btn.active { color: #6c63ff; border-bottom-color: #6c63ff; font-weight: 600; }
 
     .section { display: none; padding: 20px 16px; }
@@ -107,6 +107,49 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     #add-status { text-align: center; margin-top: 10px; font-size: 13px; color: #888; min-height: 18px; }
+
+    /* ── AI Chat ───────────────────────────────────────────── */
+    #tab-chat.active { display: flex !important; flex-direction: column; height: calc(100vh - 95px); padding: 0; }
+
+    .chat-apikey-wrap { padding: 20px 16px; overflow-y: auto; }
+
+    .chat-ui-wrap { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    .chat-toolbar { padding: 6px 12px; display: flex; justify-content: flex-end; gap: 4px; border-bottom: 1px solid #f0f0f0; background: white; flex-shrink: 0; }
+    .chat-tool-btn { background: none; border: none; font-size: 11px; color: #bbb; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+    .chat-tool-btn:hover { background: #f5f5f5; color: #888; }
+
+    .chat-messages { flex: 1; overflow-y: auto; padding: 14px 14px 8px; display: flex; flex-direction: column; gap: 10px; }
+
+    .chat-bubble { max-width: 88%; word-break: break-word; }
+    .chat-bubble.user { align-self: flex-end; }
+    .chat-bubble.assistant { align-self: flex-start; }
+
+    .bubble-text { padding: 10px 13px; border-radius: 16px; font-size: 14px; line-height: 1.55; }
+    .chat-bubble.user .bubble-text { background: #6c63ff; color: white; border-radius: 16px 16px 4px 16px; }
+    .chat-bubble.assistant .bubble-text { background: white; color: #1a1a2e; border-radius: 16px 16px 16px 4px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+
+    .chat-thinking { align-self: flex-start; padding: 12px 16px; background: white; border-radius: 16px 16px 16px 4px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+    .thinking-dots { display: flex; gap: 5px; align-items: center; }
+    .thinking-dots span { width: 7px; height: 7px; border-radius: 50%; background: #bbb; display: inline-block; animation: tdot 1.2s infinite; }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes tdot { 0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+    .expr-check-section { margin-top: 8px; background: #f8f5ff; border-radius: 12px; padding: 11px; }
+    .expr-check-header { font-size: 11px; font-weight: 700; color: #6c63ff; margin-bottom: 8px; }
+    .expr-check-card { display: flex; align-items: flex-start; gap: 9px; background: white; border-radius: 10px; padding: 9px 10px; margin-bottom: 6px; cursor: pointer; border: 1.5px solid #e8e5ff; transition: border-color 0.15s; }
+    .expr-check-card:has(input:checked) { border-color: #6c63ff; }
+    .expr-check-card input[type="checkbox"] { margin-top: 3px; accent-color: #6c63ff; width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
+    .expr-check-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .expr-check-meaning { font-size: 13px; color: #555; }
+    .expr-check-example { font-size: 11px; color: #888; font-style: italic; margin-top: 2px; line-height: 1.4; }
+
+    .chat-input-area { padding: 8px 12px 10px; border-top: 1px solid #f0f0f0; background: white; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+    .chat-input-area textarea { flex: 1; resize: none; height: 40px; max-height: 100px; padding: 9px 13px; border: 1.5px solid #e4e4e4; border-radius: 20px; font-size: 14px; font-family: inherit; outline: none; line-height: 1.4; overflow-y: auto; }
+    .chat-input-area textarea:focus { border-color: #6c63ff; }
+    .chat-send-btn { width: 40px; height: 40px; border-radius: 50%; background: #6c63ff; color: white; border: none; cursor: pointer; font-size: 20px; line-height: 1; flex-shrink: 0; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send-btn:hover { background: #5a52d5; }
+    .chat-send-btn:disabled { background: #ccc; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -120,9 +163,10 @@
 </div>
 
 <div class="nav">
-  <button class="nav-btn active" data-tab="review" onclick="switchTab('review',this)">📚 오늘 복습</button>
+  <button class="nav-btn active" data-tab="review" onclick="switchTab('review',this)">📚 복습</button>
   <button class="nav-btn" data-tab="add" onclick="switchTab('add',this)">➕ 추가</button>
-  <button class="nav-btn" data-tab="list" onclick="switchTab('list',this)">📋 전체 목록</button>
+  <button class="nav-btn" data-tab="list" onclick="switchTab('list',this)">📋 목록</button>
+  <button class="nav-btn" data-tab="chat" onclick="switchTab('chat',this)">💬 AI</button>
 </div>
 
 <!-- 복습 탭 -->
@@ -199,29 +243,50 @@
   </div>
 </div>
 
+<!-- AI 채팅 탭 -->
+<div id="tab-chat" class="section">
+  <!-- API 키 없을 때 -->
+  <div id="chat-apikey-section" class="chat-apikey-wrap">
+    <div class="section-title">💬 AI 언어 도우미</div>
+    <div class="section-sub">중국어·일본어 표현을 물어보고 단어장에 추가하세요</div>
+    <div class="setup-banner">
+      <h3>🔑 Anthropic API 키 설정</h3>
+      <p>AI 채팅 기능을 사용하려면 Anthropic API 키가 필요합니다.<br>
+         <a href="https://console.anthropic.com" target="_blank" style="color:#856404;font-weight:600">console.anthropic.com</a>에서 발급받으세요.</p>
+      <input type="password" id="apikey-input" placeholder="sk-ant-..." />
+      <button class="btn btn-primary btn-full" onclick="saveApiKey()">저장하고 시작하기</button>
+      <p style="font-size:11px;color:#aaa;margin-top:8px">키는 이 기기에만 저장됩니다 (localStorage)</p>
+    </div>
+  </div>
+
+  <!-- 채팅 UI -->
+  <div id="chat-ui-wrap" class="chat-ui-wrap" style="display:none">
+    <div class="chat-toolbar">
+      <button class="chat-tool-btn" onclick="resetChat()">🗑️ 대화 초기화</button>
+      <button class="chat-tool-btn" onclick="clearApiKey()">🔑 키 변경</button>
+    </div>
+    <div id="chat-messages" class="chat-messages"></div>
+    <div class="chat-input-area">
+      <textarea id="chat-input" placeholder="중국어/일본어 표현에 대해 물어보세요..." onkeydown="chatKeydown(event)"></textarea>
+      <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="전송">↑</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-  // ══════════════════════════════════════════════
-  //  ⚙️  설정: Firebase URL을 여기에 넣으세요
-  //  예: 'https://my-project-default-rtdb.firebaseio.com'
-  // ══════════════════════════════════════════════
   const FIREBASE_URL = 'https://languagestudy-7a491-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-  // ── 초기 시드 데이터 (첫 실행 시 자동 저장) ──────
   const SEED_DATA = [{"id":"3891443c-87b4-81fc-ba81-f81dfe34506d","표현":"お疲れ様です","언어":"🇯🇵 일본어","뜻":"수고하셨습니다 / 고생하셨습니다","예문":"今日もお疲れ様です！(오늘도 수고하셨습니다!)","카테고리":["인사","비즈니스"],"난이도":"⭐ 초급","메모":"직장에서 자주 쓰는 인사말. 퇴근할 때, 이메일 끝에도 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8126-bb98-d56ee9681612","표현":"随便 (suíbiàn)","언어":"🇨🇳 중국어","뜻":"마음대로 / 아무거나 / 상관없어","예문":"你想吃什么？随便。(뭐 먹고 싶어? 아무거나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"매우 자주 쓰이는 표현. 부정적 뉘앙스로도 쓰일 수 있으니 주의","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8116-9601-d934717634ac","표현":"なるほど","언어":"🇯🇵 일본어","뜻":"그렇구나 / 아하 / 과연","예문":"なるほど、そういうことか。(그렇구나, 그런 거였구나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"상대방 말에 공감하거나 이해할 때 씀. 비즈니스에서는 다소 캐주얼하게 들릴 수 있음","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-818f-98a2-d22db74c3aed","표현":"探店 (tàn diàn)","언어":"🇨🇳 중국어","뜻":"맛집·카페를 직접 방문해 리뷰하다, 맛집 탐방하다","예문":"周末一起去探店吧。(주말에 같이 맛집 탐방 가자.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"SNS(샤오홍슈, 더우인) 유행어. 探店博主 = 맛집 리뷰 인플루언서","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81d2-beff-c6e57949d9d9","표현":"摊位 (tān wèi)","언어":"🇨🇳 중국어","뜻":"노점, 부스, 매대","예문":"夜市有很多摊位。(야시장에 노점이 많다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"노점 표현 중 가장 일반적. 摊点보다 더 자주 쓰임","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8125-a719-ff23ebc20600","표현":"档口 (dàng kǒu)","언어":"🇨🇳 중국어","뜻":"시장·푸드코트 안의 작은 매장, 판매 코너","예문":"这个档口卖海鲜。(이 매장은 해산물을 판다.)","카테고리":["음식"],"난이도":"⭐⭐ 중급","메모":"广东 방언에서 온 표현. 시장이나 푸드코트 안 독립 매장을 가리킬 때 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c8-b273-f7545a77734f","표현":"摊点 (tāndiǎn)","언어":"🇨🇳 중국어","뜻":"노점, 가판대, 노점 영업 장소","예문":"这里有很多摊点。(여기 노점이 많아.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"摊位보다 덜 쓰이지만 같은 의미","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811d-8a5b-f85740d54f06","표현":"店铺 (diànpù)","언어":"🇨🇳 중국어","뜻":"가게, 상점","예문":"他开了一家店铺。(그는 가게를 하나 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"商店보다 구어적. 온라인 쇼핑몰도 店铺라고 부름","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8167-a5b3-c511c819bff8","표현":"小店 (xiǎodiàn)","언어":"🇨🇳 중국어","뜻":"작은 가게, 소규모 점포","예문":"我开了一家小店。(나는 작은 가게를 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"친근하고 소박한 뉘앙스. SNS에서 자기 가게를 겸손하게 부를 때도 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c1-be4b-f2823a80cf66","표현":"教导 (jiàodǎo)","언어":"🇨🇳 중국어","뜻":"가르치다, 지도하다","예문":"老师耐心地教导学生。(선생님이 학생들을 인내심 있게 가르친다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"단순 teach보다 인격적 지도 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811a-822d-f52be3c56a3c","표현":"家教 (jiājiào)","언어":"🇨🇳 중국어","뜻":"개인 과외 선생님 / 가정교육","예문":"我请了一个家教帮孩子补课。(아이 보충수업을 위해 과외 선생님을 구했다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"맥락에 따라 '과외 선생님'과 '가정교육(예의범절)' 두 가지 뜻","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-8cc7-e20cef7e4c9a","표현":"辅导老师 (fǔdǎo lǎoshī)","언어":"🇨🇳 중국어","뜻":"튜터, 지도교사","예문":"辅导老师每周来两次。(지도교사가 일주일에 두 번 온다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"家教보다 공식적인 느낌. 학원 선생님·멘토에도 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-b95a-e5be8e9e406c","표현":"轮班工作 (lúnbān gōngzuò)","언어":"🇨🇳 중국어","뜻":"교대근무를 하다","예문":"我在轮班工作。(저는 교대근무를 하고 있습니다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"파일럿·간호사 등 직업 얘기할 때 자주 쓸 표현","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8164-9fe9-fcc248a4d0b4","표현":"地勤 (dìqín)","언어":"🇨🇳 중국어","뜻":"지상직, 공항 지상근무 직원","예문":"她是机场的地勤人员。(그녀는 공항 지상직 직원이다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"航空 관련 대화에서 자주 나오는 단어. 飞行员(파일럿)과 대비되는 개념","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812a-b6d2-efdc20efcd81","표현":"通勤 (tōngqín)","언어":"🇨🇳 중국어","뜻":"통근하다","예문":"我每天坐地铁通勤。(저는 매일 지하철로 통근합니다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"通勤时间 = 출퇴근 시간. 通勤族 = 출퇴근하는 직장인","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811e-bdab-d229a99a809c","표현":"禽兽 (qínshòu)","언어":"🇨🇳 중국어","뜻":"금수, 짐승 (욕설로 사용)","예문":"他真是个禽兽！(그는 정말 짐승 같은 놈이야!)","카테고리":["감정"],"난이도":"⭐⭐ 중급","메모":"원래 뜻은 날짐승과 들짐승이지만 욕설로 많이 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8114-b84c-feea893e6f41","표현":"禽兽不如 (qínshòu bùrú)","언어":"🇨🇳 중국어","뜻":"금수만도 못하다","예문":"你简直禽兽不如！(너는 정말 금수만도 못해!)","카테고리":["감정"],"난이도":"⭐⭐⭐ 고급","메모":"강한 비난 표현. 영화·드라마에서 자주 등장","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8187-b800-c53af807e2e9","표현":"飞禽走兽 (fēiqín zǒushòu)","언어":"🇨🇳 중국어","뜻":"날짐승과 들짐승, 온갖 동물","예문":"山里有各种飞禽走兽。(산속에는 온갖 동물이 있다.)","카테고리":["기타"],"난이도":"⭐⭐⭐ 고급","메모":"4자 성어(成语). 禽兽와 함께 세트로 알아두기","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8146-8da5-e7ab97519aa9","표현":"兼职 (jiānzhí)","언어":"🇨🇳 중국어","뜻":"아르바이트, 부업, 겸직하다","예문":"我周末做兼职。(저는 주말에 부업을 합니다.)","카테고리":["비즈니스"],"난이도":"⭐ 초급","메모":"打工보다 정식 느낌. 做兼职 = 부업하다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8100-a34a-d2009f3922f8","표현":"盈亏 (yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익 (이익과 손실)","예문":"今年公司的盈亏情况怎么样？(올해 회사 손익 상황이 어떻습니까?)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"盈 = 이익, 亏 = 손실. 비즈니스/투자 대화에서 자주 등장","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81a9-bddd-d6ff188dca5d","표현":"自负盈亏 (zìfù yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익을 스스로 책임지다, 자영업/독립채산제","예문":"他辞职后自负盈亏，开了家咖啡店。(그는 퇴직 후 자영업으로 카페를 열었다.)","카테고리":["비즈니스"],"난이도":"⭐⭐⭐ 고급","메모":"창업/프리랜서 얘기할 때 자주 쓰는 4자 표현","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81bf-93ff-caab695cf991","표현":"赚钱 (zhuànqián)","언어":"🇨🇳 중국어","뜻":"돈을 벌다","예문":"他靠投资赚钱。(그는 투자로 돈을 번다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赔钱과 반대 쌍으로 외우기. 很赚钱 = 돈이 잘 벌린다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812b-a636-f522ae2d652d","표현":"赔钱 (péiqián)","언어":"🇨🇳 중국어","뜻":"돈을 잃다, 손해보다","예문":"这次投资赔钱了。(이번 투자에서 손해 봤어.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赚钱의 반대. 赔了很多钱 = 돈을 많이 잃었다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81cf-8d3f-ca93d9dace18","표현":"年年有余 (niánnián yǒuyú)","언어":"🇨🇳 중국어","뜻":"해마다 풍족하다 (새해 덕담)","예문":"祝你年年有余！(해마다 풍족하길 바랍니다!)","카테고리":["인사"],"난이도":"⭐⭐ 중급","메모":"중국 신년 대표 덕담. 余와 魚(물고기)가 동음이라 물고기 그림과 함께 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812c-b34b-e43ff4d64ced","표현":"总共有几个人？(zǒnggòng yǒu jǐ gè rén)","언어":"🇨🇳 중국어","뜻":"총 몇 명입니까?","예문":"你们总共有几个人？(너네 총 몇 명이야?)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"식당·예약할 때 자주 쓰는 실용 표현. 总共 = 합계, 도합","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8169-809a-e687683dddc0","표현":"被坑 (bèi kēng)","언어":"🇨🇳 중국어","뜻":"당하다, 사기당하다, 함정에 빠지다","예문":"我被坑了！(나 당했어!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"坑 = 구덩이. 被 = 피동. 구어체에서 매우 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-87bd-f316cd176d12","표현":"冤大头 (yuān dàtóu)","언어":"🇨🇳 중국어","뜻":"호구, 봉, 억울하게 큰돈 쓰는 사람","예문":"别把我当冤大头！(나를 호구로 보지 마!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"冤 = 억울하다, 大头 = 큰 부담. 바가지 쓰는 상황에서 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c9-9f97-cb4307c28b7a","표현":"调侃 (tiáokǎn)","언어":"🇨🇳 중국어","뜻":"놀리다, 농담하다, 빈정대다","예문":"别调侃我了。(그만 놀려.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"악의 없는 장난/놀림. SNS 댓글에서 자주 등장. 嘲讽보다 가벼운 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-815d-ab54-f7ea8e2dc8c9","표현":"避开 (bìkāi)","언어":"🇨🇳 중국어","뜻":"피하다, 비켜가다","예문":"避开高峰期出行更轻松。(피크타임을 피해서 이동하면 더 편하다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"回避보다 물리적으로 피하는 느낌이 강함","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8156-a32c-f961b331d819","표현":"规避风险 (guībì fēngxiǎn)","언어":"🇨🇳 중국어","뜻":"리스크를 관리하다, 위험을 회피하다","예문":"投资最重要的是规避风险。(투자에서 가장 중요한 것은 리스크 관리다.)","카테고리":["비즈니스"],"난이도":"⭐⭐⭐ 고급","메모":"투자·비즈니스 대화 필수 표현. 단순 避开보다 전략적 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-816b-9d2d-fa2df91953bf","표현":"直面现实 (zhímiàn xiànshí)","언어":"🇨🇳 중국어","뜻":"현실을 직시하다","예문":"不要回避问题，要直面现实。(문제를 회피하지 말고 현실을 직시해야 한다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"동기부여/조언 대화에서 자주 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-819a-b41e-c56402e9a2bc","표현":"高峰期 (gāofēngqī)","언어":"🇨🇳 중국어","뜻":"성수기, 피크타임, 러시아워","예문":"避开高峰期出行。(피크타임을 피해서 이동해.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"淡季의 반대. 교통/여행/비즈니스 모두에서 사용. 早晚高峰 = 아침저녁 러시아워","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81b6-825a-cc2daaa04e6b","표현":"淡季 (dànjì)","언어":"🇨🇳 중국어","뜻":"비수기","예문":"淡季旅游更便宜。(비수기에 여행하면 더 저렴하다.)","카테고리":["여행"],"난이도":"⭐⭐ 중급","메모":"高峰期/旺季의 반대. 旅游淡季 = 여행 비수기","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"}];
 
-  // ── 데이터 구조 ──────────────────────────────────────────
-  // Firebase  : 단어 목록 (모두 공유) — 표현/뜻/예문/메모 등
-  // localStorage : 개인 복습 기록 — 복습횟수/다음복습/완전암기
-
-  let expressions = [];   // Firebase에서 불러온 단어 목록
-  let progress = {};      // 개인 복습 기록 { [id]: {복습횟수, 다음복습, 완전암기} }
+  let expressions = [];
+  let progress = {};
   let reviewQueue = [];
   let reviewIndex = 0;
   let currentFilter = 'all';
 
-  // ── Firebase (단어 목록만) ────────────────────────────────
+  // ── Firebase ──────────────────────────────────────────────
 
   async function loadExpressions() {
     const r = await fetch(`${FIREBASE_URL}/expressions.json`);
@@ -230,7 +295,6 @@
     if (data && Array.isArray(data) && data.length > 0) {
       expressions = data;
     } else {
-      // 첫 실행: 시드 데이터로 초기화
       expressions = SEED_DATA.map(e => stripProgress(e));
       await saveExpressionsToFirebase();
     }
@@ -245,7 +309,6 @@
     if (!r.ok) throw new Error(`저장 실패: ${r.status}`);
   }
 
-  // 복습 기록 필드 제거 (Firebase엔 단어 데이터만 저장)
   function stripProgress(e) {
     const { 복습횟수, 다음복습, 완전암기, ...rest } = e;
     return rest;
@@ -262,13 +325,12 @@
     localStorage.setItem('lang_progress', JSON.stringify(progress));
   }
 
-  // Firebase 단어 + 개인 기록 합치기
   function getMerged(expr) {
     const p = progress[expr.id] || { 복습횟수: 0, 다음복습: today(), 완전암기: false };
     return { ...expr, ...p };
   }
 
-  // ── Spaced repetition ──────────────────────────────────
+  // ── Spaced repetition ──────────────────────────────────────
 
   function today() { return new Date().toISOString().slice(0,10); }
   function isDue(e) { return !e.완전암기 || e.다음복습 <= today(); }
@@ -281,7 +343,7 @@
     return d.toISOString().slice(0,10);
   }
 
-  // ── Tab nav ──────────────────────────────────────────────
+  // ── Tab nav ───────────────────────────────────────────────
 
   function switchTab(tab, btn) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -289,6 +351,7 @@
     document.getElementById('tab-' + tab).classList.add('active');
     if (btn) btn.classList.add('active');
     if (tab === 'list') renderList();
+    if (tab === 'chat') initChat();
   }
 
   // ── Review ────────────────────────────────────────────────
@@ -379,7 +442,7 @@
     showCard();
   }
 
-  // ── Add (Firebase에 공유 저장) ────────────────────────────
+  // ── Add ───────────────────────────────────────────────────
 
   async function addExpression() {
     const 표현 = document.getElementById('add-expr').value.trim();
@@ -403,7 +466,6 @@
     try {
       expressions.push(newExpr);
       await saveExpressionsToFirebase();
-      // 내 기기엔 오늘부터 복습 시작
       progress[newExpr.id] = { 복습횟수: 0, 완전암기: false, 다음복습: today() };
       saveProgress();
       ['add-expr','add-meaning','add-example','add-memo'].forEach(id => document.getElementById(id).value = '');
@@ -416,7 +478,7 @@
     }
   }
 
-  // ── List ─────────────────────────────────────────────────
+  // ── List ──────────────────────────────────────────────────
 
   function setFilter(f, btn) {
     currentFilter = f;
@@ -459,7 +521,7 @@
     }).join('');
   }
 
-  // ── Utils ────────────────────────────────────────────────
+  // ── Utils ─────────────────────────────────────────────────
 
   function updateStats() {
     const merged = expressions.map(getMerged);
@@ -477,7 +539,7 @@
     t._timer = setTimeout(() => t.classList.remove('show'), 2400);
   }
 
-  // ── Refresh ──────────────────────────────────────────────
+  // ── Refresh ───────────────────────────────────────────────
 
   async function refreshData() {
     const btn = document.getElementById('refreshBtn');
@@ -495,12 +557,250 @@
     }
   }
 
-  // ── Init ─────────────────────────────────────────────────
+  // ── AI Chat ───────────────────────────────────────────────
+
+  const CHAT_SYSTEM_PROMPT = `당신은 중국어/일본어 회화 모임을 위한 언어 학습 도우미입니다. 한국어로 친절하게 답변해주세요.
+
+사용자가 표현이나 단어에 대해 물어볼 때, 핵심 표현들을 반드시 아래 형식으로 포함해주세요:
+
+[EXPR]표현|뜻|예문(한국어 번역 포함)|메모(뉘앙스/상황)|난이도|언어[/EXPR]
+
+예시:
+[EXPR]随便 (suíbiàn)|마음대로, 아무거나|你想吃什么？随便。(뭐 먹고 싶어? 아무거나.)|캐주얼. 무관심하게 들릴 수 있어 주의|⭐ 초급|🇨🇳 중국어[/EXPR]
+
+규칙:
+- 난이도는 반드시 ⭐ 초급 / ⭐⭐ 중급 / ⭐⭐⭐ 고급 중 하나
+- 언어는 반드시 🇨🇳 중국어 또는 🇯🇵 일본어
+- 표현이 없는 일반 질문에는 [EXPR] 태그 생략 가능
+- 파이프(|) 구분자로 정확히 6개 항목`;
+
+  let chatHistory = [];
+  const chatExprStore = {};
+  let chatInited = false;
+
+  function initChat() {
+    const key = localStorage.getItem('anthropic_api_key');
+    if (key) {
+      document.getElementById('chat-apikey-section').style.display = 'none';
+      document.getElementById('chat-ui-wrap').style.display = 'flex';
+      if (!chatInited) {
+        chatInited = true;
+        showWelcomeChatMsg();
+        const ta = document.getElementById('chat-input');
+        if (ta) {
+          ta.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+          });
+        }
+      }
+    } else {
+      document.getElementById('chat-apikey-section').style.display = 'block';
+      document.getElementById('chat-ui-wrap').style.display = 'none';
+    }
+  }
+
+  function saveApiKey() {
+    const key = document.getElementById('apikey-input').value.trim();
+    if (!key) { showToast('API 키를 입력해주세요'); return; }
+    localStorage.setItem('anthropic_api_key', key);
+    document.getElementById('apikey-input').value = '';
+    chatInited = false;
+    initChat();
+  }
+
+  function clearApiKey() {
+    if (!confirm('API 키를 삭제하고 초기화면으로 돌아갑니까?')) return;
+    localStorage.removeItem('anthropic_api_key');
+    chatHistory = [];
+    chatInited = false;
+    document.getElementById('chat-messages').innerHTML = '';
+    initChat();
+  }
+
+  function resetChat() {
+    chatHistory = [];
+    document.getElementById('chat-messages').innerHTML = '';
+    Object.keys(chatExprStore).forEach(k => delete chatExprStore[k]);
+    showWelcomeChatMsg();
+  }
+
+  function showWelcomeChatMsg() {
+    appendChatBubble('assistant', '안녕하세요! 중국어나 일본어 표현에 대해 뭐든 물어보세요 😊\n\n예시:\n• "화가 났을 때 쓰는 중국어 표현 알려줘"\n• "비즈니스 일본어 이메일 인사말은?"\n• "오늘 배운 단어: 探店 — 비슷한 표현 더 있어?"\n\n관련 표현에 체크하면 단어장에 바로 추가할 수 있어요!');
+  }
+
+  function chatKeydown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  }
+
+  function parseExprs(text) {
+    const exprs = [];
+    const regex = /\[EXPR\]([\s\S]*?)\[\/EXPR\]/g;
+    let m;
+    while ((m = regex.exec(text)) !== null) {
+      const parts = m[1].split('|').map(s => s.trim());
+      if (parts.length >= 2 && parts[0] && parts[1]) {
+        exprs.push({
+          id: 'ai-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
+          표현: parts[0] || '',
+          뜻: parts[1] || '',
+          예문: parts[2] || '',
+          메모: parts[3] || '',
+          난이도: parts[4] || '⭐ 초급',
+          언어: parts[5] || '🇨🇳 중국어',
+          카테고리: '일상',
+          추가날짜: today()
+        });
+      }
+    }
+    return exprs;
+  }
+
+  function cleanMsgText(text) {
+    return text.replace(/\[EXPR\][\s\S]*?\[\/EXPR\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function appendChatBubble(role, content, msgId) {
+    const exprs = (role === 'assistant' && msgId) ? parseExprs(content) : [];
+    const cleanContent = cleanMsgText(content);
+    const container = document.getElementById('chat-messages');
+
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble ${role}`;
+    bubble.innerHTML = `<div class="bubble-text">${cleanContent.replace(/\n/g, '<br>')}</div>`;
+
+    if (exprs.length > 0) {
+      chatExprStore[msgId] = exprs;
+      const cards = exprs.map((e, i) => {
+        const langCls = e.언어.includes('중국어') ? 'badge-cn' : 'badge-jp';
+        return `<label class="expr-check-card">
+          <input type="checkbox" class="expr-checkbox" data-idx="${i}" checked>
+          <div style="flex:1;min-width:0">
+            <div class="expr-check-title">${e.표현} <span class="badge ${langCls}" style="font-size:9px">${e.언어}</span></div>
+            <div class="expr-check-meaning">${e.뜻}</div>
+            ${e.예문 ? `<div class="expr-check-example">${e.예문}</div>` : ''}
+          </div>
+        </label>`;
+      }).join('');
+
+      bubble.innerHTML += `
+        <div class="expr-check-section" id="exprs-${msgId}">
+          <div class="expr-check-header">📚 단어장에 추가할 표현 선택</div>
+          ${cards}
+          <button class="btn btn-primary btn-full" style="margin-top:8px;font-size:13px;padding:10px"
+            onclick="addCheckedExprs('${msgId}',this)">✅ 선택 표현 단어장에 추가</button>
+        </div>`;
+    }
+
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  async function addCheckedExprs(msgId, btn) {
+    const exprs = chatExprStore[msgId] || [];
+    const section = document.getElementById('exprs-' + msgId);
+    const checked = section.querySelectorAll('.expr-checkbox:checked');
+    const idxs = new Set([...checked].map(cb => Number(cb.dataset.idx)));
+    const toAdd = exprs.filter((_, i) => idxs.has(i));
+
+    if (toAdd.length === 0) { showToast('선택된 표현이 없습니다'); return; }
+
+    btn.disabled = true;
+    btn.textContent = '추가 중...';
+
+    try {
+      for (const expr of toAdd) {
+        if (!expressions.find(e => e.표현 === expr.표현)) {
+          const newId = 'ai-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
+          const entry = { ...expr, id: newId };
+          expressions.push(entry);
+          progress[newId] = { 복습횟수: 0, 완전암기: false, 다음복습: today() };
+        }
+      }
+      await saveExpressionsToFirebase();
+      saveProgress();
+      updateStats();
+      btn.textContent = `✅ ${toAdd.length}개 추가됨!`;
+      btn.style.background = '#2f9e44';
+      showToast(`🎉 ${toAdd.length}개 표현이 단어장에 추가됐어요!`);
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = '✅ 선택 표현 단어장에 추가';
+      showToast('추가 실패: ' + err.message);
+    }
+  }
+
+  async function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const apiKey = localStorage.getItem('anthropic_api_key');
+    if (!apiKey) { showToast('API 키가 없습니다'); return; }
+
+    input.value = '';
+    input.style.height = 'auto';
+
+    appendChatBubble('user', text);
+    chatHistory.push({ role: 'user', content: text });
+
+    const sendBtn = document.getElementById('chat-send-btn');
+    sendBtn.disabled = true;
+
+    const container = document.getElementById('chat-messages');
+    const thinking = document.createElement('div');
+    thinking.className = 'chat-thinking';
+    thinking.innerHTML = '<div class="thinking-dots"><span></span><span></span><span></span></div>';
+    container.appendChild(thinking);
+    container.scrollTop = container.scrollHeight;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 2048,
+          system: CHAT_SYSTEM_PROMPT,
+          messages: chatHistory.map(m => ({ role: m.role, content: m.content }))
+        })
+      });
+
+      if (thinking.parentNode) thinking.parentNode.removeChild(thinking);
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `API 오류 ${res.status}`);
+      }
+
+      const data = await res.json();
+      const reply = data.content?.[0]?.text || '';
+      chatHistory.push({ role: 'assistant', content: reply });
+      const msgId = 'msg-' + Date.now();
+      appendChatBubble('assistant', reply, msgId);
+
+    } catch (err) {
+      if (thinking.parentNode) thinking.parentNode.removeChild(thinking);
+      appendChatBubble('assistant', `⚠️ 오류가 발생했습니다: ${err.message}\n\nAPI 키를 확인해주세요.`);
+    } finally {
+      sendBtn.disabled = false;
+    }
+  }
+
+  // ── Init ──────────────────────────────────────────────────
 
   (async () => {
     try {
-      loadProgress();         // 개인 기록 먼저 로드
-      await loadExpressions(); // Firebase에서 단어 목록 로드
+      loadProgress();
+      await loadExpressions();
       renderReview();
       updateStats();
     } catch (err) {
