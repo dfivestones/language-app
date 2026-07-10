@@ -5,444 +5,250 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>외국어 표현 복습</title>
   <style>
-    /* ── Design Tokens ─────────────────────────────────────── */
     :root {
-      --p: #6c63ff;
-      --p2: #9c8fff;
-      --p-dark: #5248cc;
-      --pbg: #f0eeff;
-      --bg: #f4f5fb;
-      --card: #ffffff;
-      --t1: #1a1a2e;
-      --t2: #606077;
-      --t3: #b0b0c8;
-      --border: rgba(108,99,255,0.09);
-      --border2: #eaeaf0;
-      --r: 14px;
-      --r-lg: 20px;
-      --r-xl: 26px;
-      --nav-h: 62px;
-      --header-h: 52px;
+      --p: #6c63ff; --p2: #9c8fff; --p-dark: #5248cc; --pbg: #f0eeff;
+      --bg: #f4f5fb; --card: #ffffff; --t1: #1a1a2e; --t2: #606077; --t3: #b0b0c8;
+      --border: rgba(108,99,255,0.09); --border2: #eaeaf0;
+      --r: 14px; --r-lg: 20px; --r-xl: 26px; --nav-h: 62px; --header-h: 52px;
     }
-
+    [data-theme="dark"] {
+      --p: #8b83ff; --p2: #b8b0ff; --p-dark: #6c63ff; --pbg: #1e1a3c;
+      --bg: #0f0f1a; --card: #1a1a2e; --t1: #f0f0ff; --t2: #a0a0c0; --t3: #505070;
+      --border: rgba(139,131,255,0.14); --border2: #2a2a42;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--t1); min-height: 100dvh; transition: background 0.25s, color 0.25s; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--t1);
-      min-height: 100dvh;
-    }
+    /* ── Header ── */
+    .header { height: var(--header-h); background: rgba(255,255,255,0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 0 14px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; transition: background 0.25s; }
+    [data-theme="dark"] .header { background: rgba(15,15,26,0.92); border-bottom-color: var(--border2); }
+    .header h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.4px; background: linear-gradient(135deg, var(--p), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .header-right { display: flex; align-items: center; gap: 4px; }
+    .header .stats { font-size: 10px; color: var(--p); font-weight: 700; background: var(--pbg); padding: 3px 10px; border-radius: 100px; }
+    .icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 5px; border-radius: 10px; color: var(--t3); transition: all 0.15s; line-height: 1; }
+    .icon-btn:hover { background: var(--pbg); color: var(--p); }
 
-    /* ── Header ────────────────────────────────────────────── */
-    .header {
-      height: var(--header-h);
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      padding: 0 18px;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .header h1 {
-      font-size: 17px; font-weight: 800; letter-spacing: -0.4px;
-      background: linear-gradient(135deg, var(--p) 0%, var(--p2) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .header .stats {
-      font-size: 11px; color: var(--p); font-weight: 700;
-      background: var(--pbg); padding: 4px 12px; border-radius: 100px;
-    }
-
-    /* ── Bottom Nav ────────────────────────────────────────── */
-    .nav {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-      display: flex;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid rgba(0,0,0,0.05);
-      padding: 8px 8px calc(10px + env(safe-area-inset-bottom));
-      box-shadow: 0 -4px 30px rgba(0,0,0,0.06);
-    }
-    .nav-btn {
-      flex: 1;
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      padding: 5px 4px 2px;
-      border: none; background: none; cursor: pointer;
-      color: var(--t3); transition: color 0.2s; border-radius: 14px;
-    }
-    .nav-btn-icon {
-      font-size: 22px; line-height: 1; display: block;
-      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .nav-btn-label { font-size: 10px; font-weight: 700; letter-spacing: -0.3px; }
+    /* ── Bottom Nav ── */
+    .nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; display: flex; background: rgba(255,255,255,0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-top: 1px solid rgba(0,0,0,0.05); padding: 6px 4px calc(8px + env(safe-area-inset-bottom)); box-shadow: 0 -4px 30px rgba(0,0,0,0.06); }
+    [data-theme="dark"] .nav { background: rgba(15,15,26,0.97); border-top-color: var(--border2); }
+    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 2px 2px; border: none; background: none; cursor: pointer; color: var(--t3); transition: color 0.2s; border-radius: 12px; }
+    .nav-btn-icon { font-size: 20px; line-height: 1; display: block; transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1); }
+    .nav-btn-label { font-size: 9px; font-weight: 700; letter-spacing: -0.3px; }
     .nav-btn.active { color: var(--p); }
     .nav-btn.active .nav-btn-icon { transform: scale(1.22) translateY(-2px); }
 
-    /* ── Sections ──────────────────────────────────────────── */
-    .section {
-      display: none;
-      padding: 16px 15px calc(var(--nav-h) + 20px + env(safe-area-inset-bottom));
-      animation: fadeUp 0.22s ease;
-    }
+    /* ── Sections ── */
+    .section { display: none; padding: 14px 14px calc(var(--nav-h) + 20px + env(safe-area-inset-bottom)); animation: fadeUp 0.22s ease; }
     .section.active { display: block; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ── Flashcard ─────────────────────────────────────────── */
-    .card-container { perspective: 1200px; margin: 6px auto 14px; max-width: 380px; }
-    .card {
-      width: 100%; height: 225px; position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.52s cubic-bezier(0.4,0,0.2,1);
-      cursor: pointer;
-    }
+    /* ── Flashcard ── */
+    .card-container { perspective: 1200px; margin: 6px auto 12px; max-width: 380px; }
+    .card { width: 100%; height: 220px; position: relative; transform-style: preserve-3d; transition: transform 0.52s cubic-bezier(0.4,0,0.2,1); cursor: pointer; }
     .card.flipped { transform: rotateY(180deg); }
-    .card-face {
-      position: absolute; width: 100%; height: 100%;
-      backface-visibility: hidden; -webkit-backface-visibility: hidden;
-      border-radius: var(--r-xl);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 28px 24px; text-align: center;
-    }
-    .card-front {
-      background: linear-gradient(148deg, #7568ff 0%, #b2aaff 100%);
-      color: white;
-      box-shadow: 0 18px 50px rgba(108,99,255,0.38), 0 4px 14px rgba(108,99,255,0.18);
-    }
-    .card-back {
-      background: var(--card); transform: rotateY(180deg);
-      border: 1.5px solid rgba(108,99,255,0.1);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.07);
-    }
-    .card-lang { font-size: 12px; opacity: 0.78; margin-bottom: 12px; font-weight: 600; }
-    .card-expression { font-size: 34px; font-weight: 800; margin-bottom: 12px; line-height: 1.15; letter-spacing: -0.5px; }
+    .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--r-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 22px; text-align: center; }
+    .card-front { background: linear-gradient(148deg, #7568ff 0%, #b2aaff 100%); color: white; box-shadow: 0 18px 50px rgba(108,99,255,0.38), 0 4px 14px rgba(108,99,255,0.18); }
+    .card-back { background: var(--card); transform: rotateY(180deg); border: 1.5px solid rgba(108,99,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.07); }
+    .card-lang { font-size: 11px; opacity: 0.78; margin-bottom: 10px; font-weight: 600; }
+    .card-expression { font-size: 32px; font-weight: 800; margin-bottom: 10px; line-height: 1.15; letter-spacing: -0.5px; }
     .card-hint { font-size: 12px; opacity: 0.6; }
-    .card-meaning { font-size: 22px; font-weight: 800; color: var(--t1); margin-bottom: 10px; letter-spacing: -0.4px; }
-    .card-example { font-size: 13px; color: var(--t2); font-style: italic; line-height: 1.55; }
-    .card-memo { font-size: 11px; color: var(--t3); margin-top: 8px; line-height: 1.4; }
+    .card-meaning { font-size: 21px; font-weight: 800; color: var(--t1); margin-bottom: 8px; letter-spacing: -0.4px; }
+    .card-example { font-size: 12px; color: var(--t2); font-style: italic; line-height: 1.55; }
+    .card-memo { font-size: 11px; color: var(--t3); margin-top: 6px; line-height: 1.4; }
     .card-tts-row { display: flex; justify-content: center; max-width: 380px; margin: 0 auto 6px; }
-    .card-tts-btn {
-      background: var(--pbg); border: none; font-size: 18px; cursor: pointer;
-      padding: 7px 18px; border-radius: 100px; transition: all 0.15s;
-      color: var(--p); font-weight: 600; display: flex; align-items: center; gap: 5px;
-    }
-    .card-tts-btn:hover { background: rgba(108,99,255,0.18); }
+    .card-tts-btn { background: var(--pbg); border: none; cursor: pointer; padding: 6px 16px; border-radius: 100px; transition: all 0.15s; color: var(--p); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 5px; }
     .card-tts-btn:active { transform: scale(0.94); }
-
     .progress-wrap { max-width: 380px; margin: 0 auto 6px; }
-    .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--t3); margin-bottom: 7px; font-weight: 600; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--t3); margin-bottom: 6px; font-weight: 600; }
     .progress-bar { background: var(--border2); border-radius: 100px; height: 4px; overflow: hidden; }
     .progress-fill { background: linear-gradient(90deg, var(--p), var(--p2)); height: 100%; border-radius: 100px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
-
-    .review-btns { display: flex; gap: 10px; max-width: 380px; margin: 12px auto 8px; }
-    .btn {
-      padding: 13px 16px; border: none; border-radius: var(--r); cursor: pointer;
-      font-size: 14px; font-weight: 700; flex: 1; transition: all 0.15s;
-      font-family: inherit; letter-spacing: -0.3px;
-    }
+    .review-btns { display: flex; gap: 10px; max-width: 380px; margin: 10px auto 7px; }
+    .btn { padding: 12px 14px; border: none; border-radius: var(--r); cursor: pointer; font-size: 14px; font-weight: 700; flex: 1; transition: all 0.15s; font-family: inherit; letter-spacing: -0.3px; }
     .btn:active { transform: scale(0.96); }
     .btn-wrong { background: #fff2f2; color: #d83030; }
-    .btn-wrong:hover { background: #ffe3e3; }
+    [data-theme="dark"] .btn-wrong { background: #2a1515; color: #ff6b6b; }
     .btn-correct { background: #edfff4; color: #1e9945; }
-    .btn-correct:hover { background: #d5f7e4; }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--p) 0%, var(--p2) 100%);
-      color: white;
-      box-shadow: 0 4px 16px rgba(108,99,255,0.32);
-    }
+    [data-theme="dark"] .btn-correct { background: #0e2a18; color: #4cd87c; }
+    .btn-primary { background: linear-gradient(135deg, var(--p), var(--p2)); color: white; box-shadow: 0 4px 16px rgba(108,99,255,0.32); }
     .btn-primary:hover { box-shadow: 0 6px 22px rgba(108,99,255,0.44); transform: translateY(-1px) scale(1); }
     .btn-secondary { background: var(--border2); color: var(--t2); font-size: 13px; }
     .btn-full { width: 100%; }
-    .btn-mastered {
-      width: 100%; max-width: 380px; display: block; margin: 0 auto;
-      background: var(--pbg); color: var(--p); font-size: 13px;
-      border: 1.5px solid rgba(108,99,255,0.18);
-    }
+    .btn-mastered { width: 100%; max-width: 380px; display: block; margin: 0 auto; background: var(--pbg); color: var(--p); font-size: 13px; border: 1.5px solid rgba(108,99,255,0.18); }
 
-    /* ── Add Form ──────────────────────────────────────────── */
-    .form-group { margin-bottom: 14px; }
+    /* ── Add Form ── */
+    .form-group { margin-bottom: 13px; }
     .form-label { display: block; font-size: 10px; font-weight: 800; color: var(--t3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.9px; }
-    .form-control {
-      width: 100%; padding: 11px 14px;
-      border: 1.5px solid var(--border2); border-radius: var(--r);
-      font-size: 14px; outline: none; transition: all 0.2s;
-      font-family: inherit; background: var(--card); color: var(--t1);
-    }
+    .form-control { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border2); border-radius: var(--r); font-size: 14px; outline: none; transition: all 0.2s; font-family: inherit; background: var(--card); color: var(--t1); }
     .form-control:focus { border-color: var(--p); box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
-    textarea.form-control { resize: vertical; min-height: 64px; line-height: 1.5; }
-    .section-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.5px; }
-    .section-sub { font-size: 13px; color: var(--t3); margin-bottom: 20px; }
+    textarea.form-control { resize: vertical; min-height: 60px; line-height: 1.5; }
+    .section-title { font-size: 20px; font-weight: 800; margin-bottom: 3px; letter-spacing: -0.5px; }
+    .section-sub { font-size: 13px; color: var(--t3); margin-bottom: 18px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    /* ── List ──────────────────────────────────────────────── */
-    .search-wrap { margin-bottom: 12px; position: relative; }
-    .search-input {
-      width: 100%; padding: 10px 14px 10px 38px;
-      border: 1.5px solid var(--border2); border-radius: var(--r-lg);
-      font-size: 14px; outline: none; font-family: inherit;
-      background: var(--card); transition: all 0.2s; color: var(--t1);
-    }
+    /* ── List ── */
+    .search-wrap { margin-bottom: 10px; position: relative; }
+    .search-input { width: 100%; padding: 9px 13px 9px 36px; border: 1.5px solid var(--border2); border-radius: var(--r-lg); font-size: 14px; outline: none; font-family: inherit; background: var(--card); transition: all 0.2s; color: var(--t1); }
     .search-input:focus { border-color: var(--p); box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
-    .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--t3); pointer-events: none; }
-    .filter-bar { display: flex; gap: 7px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--t3); pointer-events: none; }
+    .filter-bar { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 3px; -webkit-overflow-scrolling: touch; }
     .filter-bar::-webkit-scrollbar { display: none; }
-    .filter-btn {
-      padding: 6px 14px; border: 1.5px solid var(--border2); border-radius: 100px;
-      background: var(--card); cursor: pointer; font-size: 12px; white-space: nowrap;
-      font-weight: 600; transition: all 0.15s; color: var(--t2); flex-shrink: 0;
-    }
+    .filter-btn { padding: 5px 13px; border: 1.5px solid var(--border2); border-radius: 100px; background: var(--card); cursor: pointer; font-size: 12px; white-space: nowrap; font-weight: 600; transition: all 0.15s; color: var(--t2); flex-shrink: 0; }
     .filter-btn:active { transform: scale(0.95); }
     .filter-btn.active { border-color: var(--p); background: var(--p); color: white; }
-
     .badge { font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 700; }
     .badge-cn { background: #fff0f0; color: #cc2222; }
     .badge-jp { background: #eef1ff; color: #2244bb; }
     .badge-due { background: #fff8e0; color: #9a6f00; }
     .badge-done { background: #e8fdf0; color: #1a7a40; }
-
-    .expr-card {
-      background: var(--card); border-radius: var(--r-lg);
-      padding: 14px 16px; margin-bottom: 10px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.025);
-      transition: box-shadow 0.2s;
-    }
+    [data-theme="dark"] .badge-cn { background: #2a0a0a; color: #ff7070; }
+    [data-theme="dark"] .badge-jp { background: #0a0a2a; color: #8899ff; }
+    .expr-card { background: var(--card); border-radius: var(--r-lg); padding: 13px 15px; margin-bottom: 9px; box-shadow: 0 1px 6px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.025); transition: box-shadow 0.2s; }
+    [data-theme="dark"] .expr-card { box-shadow: 0 1px 6px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.04); }
     .expr-card:active { transform: scale(0.99); }
-    .expr-card-top { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; flex-wrap: wrap; }
-    .expr-card-top-right { margin-left: auto; display: flex; gap: 1px; }
-    .expr-action-btn {
-      background: none; border: none; cursor: pointer; font-size: 16px;
-      padding: 4px 6px; border-radius: 8px; color: var(--t3); transition: all 0.15s; line-height: 1;
-    }
+    .expr-card-top { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+    .expr-card-top-right { margin-left: auto; display: flex; gap: 0; }
+    .expr-action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 5px; border-radius: 8px; color: var(--t3); transition: all 0.15s; line-height: 1; }
     .expr-action-btn:hover { background: var(--bg); color: var(--t2); }
     .expr-action-btn.bookmarked { color: #f5c518; }
-    .expr-title { font-size: 20px; font-weight: 800; color: var(--t1); margin-bottom: 3px; letter-spacing: -0.5px; }
-    .expr-meaning { font-size: 14px; color: var(--t2); margin-bottom: 5px; font-weight: 500; }
-    .expr-example { font-size: 12px; color: var(--t3); font-style: italic; margin-bottom: 7px; line-height: 1.5; }
-    .expr-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag { font-size: 11px; padding: 3px 9px; border-radius: 100px; background: var(--bg); color: var(--t3); font-weight: 500; }
-    .expr-footer { font-size: 11px; color: var(--t3); margin-top: 8px; }
+    .expr-title { font-size: 19px; font-weight: 800; color: var(--t1); margin-bottom: 2px; letter-spacing: -0.5px; }
+    .expr-meaning { font-size: 14px; color: var(--t2); margin-bottom: 4px; font-weight: 500; }
+    .expr-example { font-size: 12px; color: var(--t3); font-style: italic; margin-bottom: 6px; line-height: 1.5; }
+    .expr-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 100px; background: var(--bg); color: var(--t3); font-weight: 500; }
+    .expr-footer { font-size: 11px; color: var(--t3); margin-top: 7px; }
     .expr-memo { font-size: 12px; color: var(--t3); margin-top: 4px; line-height: 1.4; }
 
-    /* ── Setup Banner ──────────────────────────────────────── */
-    .setup-banner {
-      background: linear-gradient(135deg, #fffcee 0%, #fff8e0 100%);
-      border: 1.5px solid #ffd54f; border-radius: 20px;
-      padding: 18px; margin-bottom: 20px;
-    }
-    .setup-banner h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px; color: #7a5800; }
-    .setup-banner p { font-size: 13px; color: var(--t2); line-height: 1.6; margin-bottom: 12px; }
-    .setup-banner input {
-      width: 100%; padding: 9px 13px; border: 1.5px solid var(--border2);
-      border-radius: 12px; font-size: 13px; font-family: monospace;
-      margin-bottom: 10px; outline: none; background: white;
-    }
+    /* ── Setup Banner ── */
+    .setup-banner { background: linear-gradient(135deg, #fffcee, #fff8e0); border: 1.5px solid #ffd54f; border-radius: 20px; padding: 16px; margin-bottom: 18px; }
+    [data-theme="dark"] .setup-banner { background: linear-gradient(135deg, #1a1500, #1e1800); border-color: #6b5200; }
+    .setup-banner h3 { font-size: 15px; font-weight: 800; margin-bottom: 7px; color: #7a5800; }
+    [data-theme="dark"] .setup-banner h3 { color: #ffc53d; }
+    .setup-banner p { font-size: 13px; color: var(--t2); line-height: 1.6; margin-bottom: 10px; }
+    .setup-banner input { width: 100%; padding: 9px 13px; border: 1.5px solid var(--border2); border-radius: 12px; font-size: 13px; font-family: monospace; margin-bottom: 10px; outline: none; background: var(--card); color: var(--t1); }
     .setup-banner input:focus { border-color: var(--p); }
 
-    /* ── States ────────────────────────────────────────────── */
-    .empty-state { text-align: center; padding: 60px 20px; }
-    .empty-icon { font-size: 52px; margin-bottom: 14px; }
+    /* ── States ── */
+    .empty-state { text-align: center; padding: 55px 20px; }
+    .empty-icon { font-size: 50px; margin-bottom: 12px; }
     .empty-state p { font-size: 15px; color: var(--t3); line-height: 1.6; }
-    .loading-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; gap: 14px; }
-    .spinner { width: 28px; height: 28px; border: 3px solid var(--pbg); border-top-color: var(--p); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .loading-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 55px; gap: 12px; }
+    .spinner { width: 26px; height: 26px; border: 3px solid var(--pbg); border-top-color: var(--p); border-radius: 50%; animation: spin 0.7s linear infinite; }
     .loading-wrap p { font-size: 13px; color: var(--t3); }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .review-done { text-align: center; padding: 28px 20px; }
+    .done-emoji { font-size: 60px; margin-bottom: 12px; }
+    .done-title { font-size: 22px; font-weight: 800; margin-bottom: 7px; letter-spacing: -0.5px; }
+    .done-sub { font-size: 14px; color: var(--t2); line-height: 1.6; margin-bottom: 20px; }
 
-    .review-done { text-align: center; padding: 32px 20px; }
-    .done-emoji { font-size: 64px; margin-bottom: 14px; }
-    .done-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
-    .done-sub { font-size: 14px; color: var(--t2); line-height: 1.6; margin-bottom: 24px; }
-
-    /* ── Stats Card ────────────────────────────────────────── */
-    .stats-card {
-      background: var(--card); border-radius: var(--r-xl);
-      padding: 18px; margin-bottom: 16px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-    }
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+    /* ── Stats Card ── */
+    .stats-card { background: var(--card); border-radius: var(--r-xl); padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 16px rgba(0,0,0,0.04); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
     .stat-item { text-align: center; }
-    .stat-num { font-size: 28px; font-weight: 800; color: var(--p); letter-spacing: -1px; }
+    .stat-num { font-size: 26px; font-weight: 800; color: var(--p); letter-spacing: -1px; }
     .stat-label { font-size: 11px; color: var(--t3); margin-top: 2px; font-weight: 600; }
-    .stat-bar-row { margin-top: 16px; }
+    .stat-bar-row { margin-top: 14px; }
     .stat-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--t3); margin-bottom: 5px; font-weight: 600; }
     .stat-bar { background: var(--bg); border-radius: 100px; height: 5px; overflow: hidden; }
     .stat-bar-fill { height: 100%; border-radius: 100px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
 
-    /* ── Toast ─────────────────────────────────────────────── */
-    .toast {
-      position: fixed;
-      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px);
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: rgba(26,26,46,0.92);
-      backdrop-filter: blur(10px);
-      color: white; padding: 10px 20px; border-radius: 100px;
-      font-size: 13px; font-weight: 600;
-      opacity: 0; transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
-      z-index: 999; white-space: nowrap; pointer-events: none;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
+    /* ── Today Feed ── */
+    .feed-section { margin-top: 18px; }
+    .feed-title { font-size: 13px; font-weight: 800; color: var(--t2); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .feed-card { background: var(--card); border-radius: var(--r-lg); padding: 12px 14px; margin-bottom: 8px; border-left: 3px solid var(--p); box-shadow: 0 1px 6px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 10px; }
+    .feed-expr { font-size: 18px; font-weight: 800; flex: 1; }
+    .feed-meaning { font-size: 13px; color: var(--t2); }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px); left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(26,26,46,0.92); backdrop-filter: blur(10px); color: white; padding: 10px 20px; border-radius: 100px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.28s cubic-bezier(0.4,0,0.2,1); z-index: 999; white-space: nowrap; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #add-status { text-align: center; margin-top: 10px; font-size: 13px; color: var(--t3); min-height: 18px; }
 
-    #add-status { text-align: center; margin-top: 12px; font-size: 13px; color: var(--t3); min-height: 18px; }
+    /* ── Quiz ── */
+    .quiz-header { text-align: center; margin-bottom: 16px; }
+    .quiz-question-card { background: linear-gradient(148deg, #7568ff, #b2aaff); border-radius: var(--r-xl); padding: 28px 22px; text-align: center; color: white; margin-bottom: 16px; box-shadow: 0 14px 40px rgba(108,99,255,0.35); }
+    .quiz-q-label { font-size: 11px; opacity: 0.75; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .quiz-q-text { font-size: 30px; font-weight: 800; line-height: 1.2; }
+    .quiz-q-sub { font-size: 13px; opacity: 0.7; margin-top: 8px; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-choice { background: var(--card); border: 2px solid var(--border2); border-radius: var(--r-lg); padding: 14px 16px; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; color: var(--t1); transition: all 0.15s; font-family: inherit; }
+    .quiz-choice:hover { border-color: var(--p); background: var(--pbg); }
+    .quiz-choice:active { transform: scale(0.98); }
+    .quiz-choice.correct { border-color: #1e9945; background: #edfff4; color: #1e9945; }
+    .quiz-choice.wrong { border-color: #d83030; background: #fff2f2; color: #d83030; }
+    [data-theme="dark"] .quiz-choice.correct { background: #0e2a18; color: #4cd87c; border-color: #4cd87c; }
+    [data-theme="dark"] .quiz-choice.wrong { background: #2a1515; color: #ff6b6b; border-color: #ff6b6b; }
+    .quiz-result { text-align: center; padding: 30px 20px; }
+    .quiz-score { font-size: 60px; font-weight: 800; background: linear-gradient(135deg, var(--p), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .quiz-mode-toggle { display: flex; background: var(--border2); border-radius: 100px; padding: 3px; margin-bottom: 16px; max-width: 280px; margin-left: auto; margin-right: auto; }
+    .quiz-mode-btn { flex: 1; padding: 6px 10px; border: none; border-radius: 100px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: none; color: var(--t3); font-family: inherit; }
+    .quiz-mode-btn.active { background: var(--p); color: white; box-shadow: 0 2px 8px rgba(108,99,255,0.3); }
 
-    /* ── AI Chat ───────────────────────────────────────────── */
-    #tab-chat.active {
-      display: flex !important; flex-direction: column;
-      height: calc(100dvh - var(--header-h) - var(--nav-h) - env(safe-area-inset-bottom));
-      padding: 0;
-    }
-    .chat-apikey-wrap { padding: 20px 16px; overflow-y: auto; }
+    /* ── AI Chat ── */
+    #tab-chat.active { display: flex !important; flex-direction: column; height: calc(100dvh - var(--header-h) - var(--nav-h) - env(safe-area-inset-bottom)); padding: 0; }
+    .chat-apikey-wrap { padding: 18px 14px; overflow-y: auto; }
     .chat-ui-wrap { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-    .chat-toolbar {
-      padding: 7px 14px; display: flex; justify-content: flex-end; gap: 4px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
-      flex-shrink: 0;
-    }
-    .chat-tool-btn {
-      background: none; border: none; font-size: 11px; color: var(--t3);
-      cursor: pointer; padding: 5px 10px; border-radius: 8px;
-      font-family: inherit; font-weight: 600; transition: all 0.15s;
-    }
+    .chat-toolbar { padding: 6px 12px; display: flex; justify-content: flex-end; gap: 4px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); flex-shrink: 0; }
+    [data-theme="dark"] .chat-toolbar { background: rgba(26,26,46,0.95); }
+    .chat-tool-btn { background: none; border: none; font-size: 11px; color: var(--t3); cursor: pointer; padding: 5px 10px; border-radius: 8px; font-family: inherit; font-weight: 600; transition: all 0.15s; }
     .chat-tool-btn:hover { background: var(--bg); color: var(--t2); }
-
-    .chat-messages {
-      flex: 1; overflow-y: auto;
-      padding: 16px 14px 8px;
-      display: flex; flex-direction: column; gap: 10px;
-      background: var(--bg);
-    }
-
+    .chat-messages { flex: 1; overflow-y: auto; padding: 14px 12px 8px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
     .chat-bubble { max-width: 88%; word-break: break-word; }
     .chat-bubble.user { align-self: flex-end; }
     .chat-bubble.assistant { align-self: flex-start; }
-
-    .bubble-text { padding: 11px 14px; border-radius: 18px; font-size: 14px; line-height: 1.65; }
-    .chat-bubble.user .bubble-text {
-      background: linear-gradient(135deg, #7568ff, #a89bff);
-      color: white; border-radius: 18px 18px 4px 18px;
-      box-shadow: 0 4px 16px rgba(108,99,255,0.28);
-    }
-    .chat-bubble.assistant .bubble-text {
-      background: var(--card); color: var(--t1);
-      border-radius: 18px 18px 18px 4px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03);
-    }
-
-    .chat-thinking {
-      align-self: flex-start; padding: 14px 16px;
-      background: var(--card); border-radius: 18px 18px 18px 4px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
+    .bubble-text { padding: 10px 13px; border-radius: 18px; font-size: 14px; line-height: 1.65; }
+    .chat-bubble.user .bubble-text { background: linear-gradient(135deg, #7568ff, #a89bff); color: white; border-radius: 18px 18px 4px 18px; box-shadow: 0 4px 16px rgba(108,99,255,0.28); }
+    .chat-bubble.assistant .bubble-text { background: var(--card); color: var(--t1); border-radius: 18px 18px 18px 4px; box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03); }
+    .chat-thinking { align-self: flex-start; padding: 12px 14px; background: var(--card); border-radius: 18px 18px 18px 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     .thinking-dots { display: flex; gap: 5px; align-items: center; }
-    .thinking-dots span {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--t3);
-      animation: tdot 1.2s infinite;
-    }
+    .thinking-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--t3); animation: tdot 1.2s infinite; }
     .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
     .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes tdot { 0%,80%,100% { transform: scale(0.7); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-
-    .expr-check-section {
-      margin-top: 10px; background: var(--pbg);
-      border-radius: var(--r-lg); padding: 12px;
-      border: 1px solid rgba(108,99,255,0.12);
-    }
-    .expr-check-header { font-size: 11px; font-weight: 800; color: var(--p); margin-bottom: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .expr-check-card {
-      display: flex; align-items: flex-start; gap: 9px; background: white;
-      border-radius: 12px; padding: 10px 11px; margin-bottom: 6px; cursor: pointer;
-      border: 1.5px solid rgba(108,99,255,0.1); transition: border-color 0.15s;
-    }
+    .expr-check-section { margin-top: 10px; background: var(--pbg); border-radius: var(--r-lg); padding: 11px; border: 1px solid rgba(108,99,255,0.12); }
+    .expr-check-header { font-size: 11px; font-weight: 800; color: var(--p); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .expr-check-card { display: flex; align-items: flex-start; gap: 8px; background: var(--card); border-radius: 12px; padding: 9px 10px; margin-bottom: 6px; cursor: pointer; border: 1.5px solid rgba(108,99,255,0.1); transition: border-color 0.15s; }
     .expr-check-card:has(input:checked) { border-color: var(--p); }
     .expr-check-card input[type="checkbox"] { margin-top: 3px; accent-color: var(--p); width: 15px; height: 15px; flex-shrink: 0; }
     .expr-check-title { font-size: 15px; font-weight: 700; color: var(--t1); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .expr-check-meaning { font-size: 13px; color: var(--t2); }
     .expr-check-example { font-size: 11px; color: var(--t3); font-style: italic; margin-top: 2px; line-height: 1.4; }
-
-    .chat-input-area {
-      padding: 8px 12px 10px; border-top: 1px solid var(--border);
-      background: rgba(255,255,255,0.97);
-      display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0;
-    }
-    .chat-input-area textarea {
-      flex: 1; resize: none; height: 40px; max-height: 100px;
-      padding: 9px 14px; border: 1.5px solid var(--border2);
-      border-radius: 20px; font-size: 14px; font-family: inherit;
-      outline: none; line-height: 1.4; overflow-y: auto;
-      background: var(--bg); color: var(--t1); transition: all 0.2s;
-    }
-    .chat-input-area textarea:focus {
-      border-color: var(--p); background: white;
-      box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
-    }
-    .chat-send-btn {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--p), var(--p2));
-      color: white; border: none; cursor: pointer; font-size: 18px;
-      flex-shrink: 0; transition: all 0.15s;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(108,99,255,0.35);
-    }
-    .chat-send-btn:hover { box-shadow: 0 6px 18px rgba(108,99,255,0.48); transform: scale(1.07); }
+    .chat-input-area { padding: 7px 10px 9px; border-top: 1px solid var(--border); background: rgba(255,255,255,0.97); display: flex; gap: 7px; align-items: flex-end; flex-shrink: 0; }
+    [data-theme="dark"] .chat-input-area { background: rgba(26,26,46,0.97); }
+    .chat-input-area textarea { flex: 1; resize: none; height: 38px; max-height: 100px; padding: 8px 13px; border: 1.5px solid var(--border2); border-radius: 20px; font-size: 14px; font-family: inherit; outline: none; line-height: 1.4; overflow-y: auto; background: var(--bg); color: var(--t1); transition: all 0.2s; }
+    .chat-input-area textarea:focus { border-color: var(--p); background: var(--card); box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
+    .chat-send-btn { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--p), var(--p2)); color: white; border: none; cursor: pointer; font-size: 17px; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(108,99,255,0.35); }
+    .chat-send-btn:hover { transform: scale(1.08); }
     .chat-send-btn:disabled { background: var(--border2); box-shadow: none; cursor: not-allowed; transform: none; }
-    .img-attach-btn {
-      width: 36px; height: 36px; background: var(--bg);
-      border: 1.5px solid var(--border2); border-radius: 50%; cursor: pointer;
-      font-size: 16px; flex-shrink: 0; transition: all 0.15s;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .img-attach-btn { width: 34px; height: 34px; background: var(--bg); border: 1.5px solid var(--border2); border-radius: 50%; cursor: pointer; font-size: 15px; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
     .img-attach-btn:hover { background: var(--pbg); border-color: var(--p); }
     .bubble-img { max-width: 100%; max-height: 200px; border-radius: 12px; margin-bottom: 6px; display: block; }
-
-    /* ── Quick Action Chips ────────────────────────────────── */
-    .quick-actions {
-      display: flex; gap: 7px; overflow-x: auto;
-      padding: 8px 13px 6px; -webkit-overflow-scrolling: touch;
-      flex-shrink: 0; background: rgba(255,255,255,0.95);
-      border-top: 1px solid var(--border);
-    }
+    .quick-actions { display: flex; gap: 6px; overflow-x: auto; padding: 7px 12px 5px; -webkit-overflow-scrolling: touch; flex-shrink: 0; background: rgba(255,255,255,0.95); border-top: 1px solid var(--border); }
+    [data-theme="dark"] .quick-actions { background: rgba(26,26,46,0.95); }
     .quick-actions::-webkit-scrollbar { display: none; }
-    .quick-chip {
-      padding: 5px 14px; border: 1.5px solid var(--border2); border-radius: 100px;
-      background: white; cursor: pointer; font-size: 12px; white-space: nowrap;
-      color: var(--t2); transition: all 0.15s; flex-shrink: 0;
-      font-family: inherit; font-weight: 600;
-    }
+    .quick-chip { padding: 5px 13px; border: 1.5px solid var(--border2); border-radius: 100px; background: var(--card); cursor: pointer; font-size: 12px; white-space: nowrap; color: var(--t2); transition: all 0.15s; flex-shrink: 0; font-family: inherit; font-weight: 600; }
     .quick-chip:hover { border-color: var(--p); color: var(--p); background: var(--pbg); }
     .quick-chip:active { transform: scale(0.94); }
-
-    /* ── Paste Bar ─────────────────────────────────────────── */
-    .paste-bar {
-      display: none; align-items: center; gap: 8px;
-      padding: 7px 13px 6px;
-      background: linear-gradient(135deg, #edeaff, #e4dfff);
-      flex-shrink: 0; border-top: 1px solid rgba(108,99,255,0.14);
-    }
+    .paste-bar { display: none; align-items: center; gap: 7px; padding: 6px 12px 5px; background: linear-gradient(135deg, #edeaff, #e4dfff); flex-shrink: 0; border-top: 1px solid rgba(108,99,255,0.14); }
+    [data-theme="dark"] .paste-bar { background: linear-gradient(135deg, #1a1640, #15122e); }
     .paste-bar-label { font-size: 12px; color: var(--p); font-weight: 700; flex: 1; }
-    .paste-bar-btn {
-      padding: 4px 13px; border-radius: 100px;
-      cursor: pointer; font-size: 12px; font-weight: 700; font-family: inherit; transition: all 0.15s;
-    }
+    .paste-bar-btn { padding: 4px 12px; border-radius: 100px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: inherit; transition: all 0.15s; }
     .paste-bar-btn.fill { background: var(--p); color: white; border: none; }
-    .paste-bar-btn.outline { background: white; color: var(--p); border: 1.5px solid var(--p); }
+    .paste-bar-btn.outline { background: var(--card); color: var(--p); border: 1.5px solid var(--p); }
+
+    /* ── Confetti ── */
+    .confetti-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+    .confetti-piece { position: absolute; width: 8px; height: 10px; top: -20px; animation: confettiFall linear forwards; border-radius: 2px; }
+    @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
   </style>
 </head>
 <body>
 
 <div class="header">
   <h1>🗣️ 외국어 표현</h1>
-  <div style="display:flex;align-items:center;gap:8px">
+  <div class="header-right">
     <div class="stats" id="headerStats">불러오는 중...</div>
-    <button onclick="refreshData()" id="refreshBtn"
-      style="background:none;border:none;font-size:20px;cursor:pointer;padding:3px 5px;line-height:1;color:var(--t3);border-radius:10px;transition:all 0.15s"
-      onmouseover="this.style.background='var(--pbg)'" onmouseout="this.style.background='none'"
-      title="새로고침">↻</button>
+    <button class="icon-btn" onclick="refreshData()" id="refreshBtn" title="새로고침">↻</button>
+    <button class="icon-btn" onclick="toggleDark()" id="darkBtn" title="다크모드">🌙</button>
   </div>
 </div>
 
@@ -450,6 +256,19 @@
 <div id="tab-review" class="section active">
   <div id="review-content">
     <div class="loading-wrap"><div class="spinner"></div><p>불러오는 중...</p></div>
+  </div>
+</div>
+
+<!-- 퀴즈 탭 -->
+<div id="tab-quiz" class="section">
+  <div class="section-title">🎯 퀴즈 모드</div>
+  <div class="section-sub">표현을 보고 맞는 뜻을 선택하세요</div>
+  <div class="quiz-mode-toggle">
+    <button class="quiz-mode-btn active" id="qmode-expr" onclick="setQuizMode('expr',this)">표현 → 뜻</button>
+    <button class="quiz-mode-btn" id="qmode-meaning" onclick="setQuizMode('meaning',this)">뜻 → 표현</button>
+  </div>
+  <div id="quiz-content">
+    <div class="empty-state"><div class="empty-icon">🎯</div><p>표현을 불러오는 중...</p></div>
   </div>
 </div>
 
@@ -497,13 +316,13 @@
   </div>
   <div class="form-group">
     <label class="form-label">메모</label>
-    <textarea id="add-memo" class="form-control" placeholder="뉘앙스, 사용 상황 등 메모 (선택)"></textarea>
+    <textarea id="add-memo" class="form-control" placeholder="뉘앙스, 사용 상황 등 (선택)"></textarea>
   </div>
   <button class="btn btn-primary btn-full" onclick="addExpression()">저장 💾</button>
   <div id="add-status"></div>
 </div>
 
-<!-- 전체 목록 탭 -->
+<!-- 목록 탭 -->
 <div id="tab-list" class="section">
   <div class="section-title">전체 표현</div>
   <div class="search-wrap">
@@ -537,7 +356,6 @@
       <p style="font-size:11px;color:var(--t3);margin-top:8px">키는 이 기기에만 저장됩니다 (localStorage)</p>
     </div>
   </div>
-
   <div id="chat-ui-wrap" class="chat-ui-wrap" style="display:none">
     <div class="chat-toolbar">
       <button class="chat-tool-btn" onclick="resetChat()">🗑️ 대화 초기화</button>
@@ -562,10 +380,10 @@
       <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
       <div style="flex:1;display:flex;flex-direction:column;min-width:0;gap:6px">
         <div id="img-preview-wrap" style="display:none;position:relative;width:fit-content">
-          <img id="img-preview" style="max-height:72px;border-radius:10px;border:1.5px solid rgba(108,99,255,0.2);display:block">
+          <img id="img-preview" style="max-height:70px;border-radius:10px;border:1.5px solid rgba(108,99,255,0.2);display:block">
           <button onclick="removeImage()" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;background:#e53e3e;color:white;border:none;border-radius:50%;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center">✕</button>
         </div>
-        <div style="display:flex;gap:8px;align-items:flex-end">
+        <div style="display:flex;gap:7px;align-items:flex-end">
           <button class="img-attach-btn" onclick="document.getElementById('img-file-input').click()" title="사진 첨부">📷</button>
           <textarea id="chat-input" placeholder="중국어/일본어 표현에 대해 물어보세요..." onkeydown="chatKeydown(event)"></textarea>
           <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="전송">↑</button>
@@ -575,23 +393,22 @@
   </div>
 </div>
 
-<!-- Bottom Nav -->
+<!-- Bottom Nav (5 tabs) -->
 <div class="nav">
   <button class="nav-btn active" data-tab="review" onclick="switchTab('review',this)">
-    <span class="nav-btn-icon">📚</span>
-    <span class="nav-btn-label">복습</span>
+    <span class="nav-btn-icon">📚</span><span class="nav-btn-label">복습</span>
+  </button>
+  <button class="nav-btn" data-tab="quiz" onclick="switchTab('quiz',this)">
+    <span class="nav-btn-icon">🎯</span><span class="nav-btn-label">퀴즈</span>
   </button>
   <button class="nav-btn" data-tab="add" onclick="switchTab('add',this)">
-    <span class="nav-btn-icon">➕</span>
-    <span class="nav-btn-label">추가</span>
+    <span class="nav-btn-icon">➕</span><span class="nav-btn-label">추가</span>
   </button>
   <button class="nav-btn" data-tab="list" onclick="switchTab('list',this)">
-    <span class="nav-btn-icon">📋</span>
-    <span class="nav-btn-label">목록</span>
+    <span class="nav-btn-icon">📋</span><span class="nav-btn-label">목록</span>
   </button>
   <button class="nav-btn" data-tab="chat" onclick="switchTab('chat',this)">
-    <span class="nav-btn-icon">💬</span>
-    <span class="nav-btn-label">AI</span>
+    <span class="nav-btn-icon">💬</span><span class="nav-btn-label">AI</span>
   </button>
 </div>
 
@@ -600,7 +417,7 @@
 <script>
   const FIREBASE_URL = 'https://languagestudy-7a491-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-  const SEED_DATA = [{"id":"3891443c-87b4-81fc-ba81-f81dfe34506d","표현":"お疲れ様です","언어":"🇯🇵 일본어","뜻":"수고하셨습니다 / 고생하셨습니다","예문":"今日もお疲れ様です！(오늘도 수고하셨습니다!)","카테고리":["인사","비즈니스"],"난이도":"⭐ 초급","메모":"직장에서 자주 쓰는 인사말. 퇴근할 때, 이메일 끝에도 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8126-bb98-d56ee9681612","표현":"随便 (suíbiàn)","언어":"🇨🇳 중국어","뜻":"마음대로 / 아무거나 / 상관없어","예문":"你想吃什么？随便。(뭐 먹고 싶어? 아무거나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"매우 자주 쓰이는 표현. 부정적 뉘앙스로도 쓰일 수 있으니 주의","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8116-9601-d934717634ac","표현":"なるほど","언어":"🇯🇵 일본어","뜻":"그렇구나 / 아하 / 과연","예문":"なるほど、そういうことか。(그렇구나, 그런 거였구나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"상대방 말에 공감하거나 이해할 때 씀. 비즈니스에서는 다소 캐주얼하게 들릴 수 있음","복습횟수":0,"완전암기":false,"다음복습":"2026-06-25","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-818f-98a2-d22db74c3aed","표현":"探店 (tàn diàn)","언어":"🇨🇳 중국어","뜻":"맛집·카페를 직접 방문해 리뷰하다, 맛집 탐방하다","예문":"周末一起去探店吧。(주말에 같이 맛집 탐방 가자.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"SNS(샤오홍슈, 더우인) 유행어. 探店博主 = 맛집 리뷰 인플루언서","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81d2-beff-c6e57949d9d9","표현":"摊位 (tān wèi)","언어":"🇨🇳 중국어","뜻":"노점, 부스, 매대","예문":"夜市有很多摊位。(야시장에 노점이 많다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"노점 표현 중 가장 일반적. 摊点보다 더 자주 쓰임","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8125-a719-ff23ebc20600","표현":"档口 (dàng kǒu)","언어":"🇨🇳 중국어","뜻":"시장·푸드코트 안의 작은 매장, 판매 코너","예문":"这个档口卖海鲜。(이 매장은 해산물을 판다.)","카테고리":["음식"],"난이도":"⭐⭐ 중급","메모":"广东 방언에서 온 표현. 시장이나 푸드코트 안 독립 매장을 가리킬 때 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c8-b273-f7545a77734f","표현":"摊点 (tāndiǎn)","언어":"🇨🇳 중국어","뜻":"노점, 가판대, 노점 영업 장소","예문":"这里有很多摊点。(여기 노점이 많아.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"摊位보다 덜 쓰이지만 같은 의미","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811d-8a5b-f85740d54f06","표현":"店铺 (diànpù)","언어":"🇨🇳 중국어","뜻":"가게, 상점","예문":"他开了一家店铺。(그는 가게를 하나 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"商店보다 구어적. 온라인 쇼핑몰도 店铺라고 부름","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8167-a5b3-c511c819bff8","표현":"小店 (xiǎodiàn)","언어":"🇨🇳 중국어","뜻":"작은 가게, 소규모 점포","예문":"我开了一家小店。(나는 작은 가게를 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"친근하고 소박한 뉘앙스. SNS에서 자기 가게를 겸손하게 부를 때도 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c1-be4b-f2823a80cf66","표현":"教导 (jiàodǎo)","언어":"🇨🇳 중국어","뜻":"가르치다, 지도하다","예문":"老师耐心地教导学生。(선생님이 학생들을 인내심 있게 가르친다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"단순 teach보다 인격적 지도 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811a-822d-f52be3c56a3c","표현":"家教 (jiājiào)","언어":"🇨🇳 중국어","뜻":"개인 과외 선생님 / 가정교육","예문":"我请了一个家教帮孩子补课。(아이 보충수업을 위해 과외 선생님을 구했다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"맥락에 따라 '과외 선생님'과 '가정교육(예의범절)' 두 가지 뜻","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-8cc7-e20cef7e4c9a","표현":"辅导老师 (fǔdǎo lǎoshī)","언어":"🇨🇳 중국어","뜻":"튜터, 지도교사","예문":"辅导老师每周来两次。(지도교사가 일주일에 두 번 온다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"家教보다 공식적인 느낌. 학원 선생님·멘토에도 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-b95a-e5be8e9e406c","표현":"轮班工作 (lúnbān gōngzuò)","언어":"🇨🇳 중국어","뜻":"교대근무를 하다","예문":"我在轮班工作。(저는 교대근무를 하고 있습니다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"파일럿·간호사 등 직업 얘기할 때 자주 쓸 표현","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8164-9fe9-fcc248a4d0b4","표현":"地勤 (dìqín)","언어":"🇨🇳 중국어","뜻":"지상직, 공항 지상근무 직원","예문":"她是机场的地勤人员。(그녀는 공항 지상직 직원이다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"航空 관련 대화에서 자주 나오는 단어. 飞行员(파일럿)과 대비되는 개념","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812a-b6d2-efdc20efcd81","표현":"通勤 (tōngqín)","언어":"🇨🇳 중국어","뜻":"통근하다","예문":"我每天坐地铁通勤。(저는 매일 지하철로 통근합니다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"通勤时间 = 출퇴근 시간. 通勤族 = 출퇴근하는 직장인","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811e-bdab-d229a99a809c","표현":"禽兽 (qínshòu)","언어":"🇨🇳 중국어","뜻":"금수, 짐승 (욕설로 사용)","예문":"他真是个禽兽！(그는 정말 짐승 같은 놈이야!)","카테고리":["감정"],"난이도":"⭐⭐ 중급","메모":"원래 뜻은 날짐승과 들짐승이지만 욕설로 많이 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8114-b84c-feea893e6f41","표현":"禽兽不如 (qínshòu bùrú)","언어":"🇨🇳 중국어","뜻":"금수만도 못하다","예문":"你简直禽兽不如！(너는 정말 금수만도 못해!)","카테고리":["감정"],"난이도":"⭐⭐⭐ 고급","메모":"강한 비난 표현. 영화·드라마에서 자주 등장","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8187-b800-c53af807e2e9","표현":"飞禽走兽 (fēiqín zǒushòu)","언어":"🇨🇳 중국어","뜻":"날짐승과 들짐승, 온갖 동물","예문":"山里有各种飞禽走兽。(산속에는 온갖 동물이 있다.)","카테고리":["기타"],"난이도":"⭐⭐⭐ 고급","메모":"4자 성어(成语). 禽兽와 함께 세트로 알아두기","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8146-8da5-e7ab97519aa9","표현":"兼职 (jiānzhí)","언어":"🇨🇳 중국어","뜻":"아르바이트, 부업, 겸직하다","예문":"我周末做兼职。(저는 주말에 부업을 합니다.)","카테고리":["비즈니스"],"난이도":"⭐ 초급","메모":"打工보다 정식 느낌. 做兼职 = 부업하다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8100-a34a-d2009f3922f8","표현":"盈亏 (yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익 (이익과 손실)","예문":"今年公司的盈亏情况怎么样？(올해 회사 손익 상황이 어떻습니까?)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"盈 = 이익, 亏 = 손실. 비즈니스/투자 대화에서 자주 등장","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81a9-bddd-d6ff188dca5d","표현":"自负盈亏 (zìfù yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익을 스스로 책임지다, 자영업/독립채산제","예문":"他辞职后自负盈亏，开了家咖啡店。(그는 퇴직 후 자영업으로 카페를 열었다.)","카테고리":["비즈니스"],"난이도":"⭐⭐⭐ 고급","메모":"창업/프리랜서 얘기할 때 자주 쓰는 4자 표현","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81bf-93ff-caab695cf991","표현":"赚钱 (zhuànqián)","언어":"🇨🇳 중국어","뜻":"돈을 벌다","예문":"他靠投资赚钱。(그는 투자로 돈을 번다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赔钱과 반대 쌍으로 외우기. 很赚钱 = 돈이 잘 벌린다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812b-a636-f522ae2d652d","표현":"赔钱 (péiqián)","언어":"🇨🇳 중국어","뜻":"돈을 잃다, 손해보다","예문":"这次投资赔钱了。(이번 투자에서 손해 봤어.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赚钱의 반대. 赔了很多钱 = 돈을 많이 잃었다","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81cf-8d3f-ca93d9dace18","표현":"年年有余 (niánnián yǒuyú)","언어":"🇨🇳 중국어","뜻":"해마다 풍족하다 (새해 덕담)","예문":"祝你年年有余！(해마다 풍족하길 바랍니다!)","카테고리":["인사"],"난이도":"⭐⭐ 중급","메모":"중국 신년 대표 덕담. 余와 魚(물고기)가 동음이라 물고기 그림과 함께 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812c-b34b-e43ff4d64ced","표현":"总共有几个人？(zǒnggòng yǒu jǐ gè rén)","언어":"🇨🇳 중국어","뜻":"총 몇 명입니까?","예문":"你们总共有几个人？(너네 총 몇 명이야?)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"식당·예약할 때 자주 쓰는 실용 표현. 总共 = 합계, 도합","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8169-809a-e687683dddc0","표현":"被坑 (bèi kēng)","언어":"🇨🇳 중국어","뜻":"당하다, 사기당하다, 함정에 빠지다","예문":"我被坑了！(나 당했어!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"坑 = 구덩이. 被 = 피동. 구어체에서 매우 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-87bd-f316cd176d12","표현":"冤大头 (yuān dàtóu)","언어":"🇨🇳 중국어","뜻":"호구, 봉, 억울하게 큰돈 쓰는 사람","예문":"别把我当冤大头！(나를 호구로 보지 마!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"冤 = 억울하다, 大头 = 큰 부담. 바가지 쓰는 상황에서 자주 씀","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c9-9f97-cb4307c28b7a","표현":"调侃 (tiáokǎn)","언어":"🇨🇳 중국어","뜻":"놀리다, 농담하다, 빈정대다","예문":"别调侃我了。(그만 놀려.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"악의 없는 장난/놀림. SNS 댓글에서 자주 등장. 嘲讽보다 가벼운 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-815d-ab54-f7ea8e2dc8c9","표현":"避开 (bìkāi)","언어":"🇨🇳 중국어","뜻":"피하다, 비켜가다","예문":"避开高峰期出行更轻松。(피크타임을 피해서 이동하면 더 편하다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"回避보다 물리적으로 피하는 느낌이 강함","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8156-a32c-f961b331d819","표현":"规避风险 (guībì fēngxiǎn)","언어":"🇨🇳 중국어","뜻":"리스크를 관리하다, 위험을 회피하다","예문":"投资最重要的是规避风险。(투자에서 가장 중요한 것은 리스크 관리다.)","카테고리":["비즈니스"],"난이도":"⭐⭐⭐ 고급","메모":"투자·비즈니스 대화 필수 표현. 단순 避开보다 전략적 뉘앙스","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-816b-9d2d-fa2df91953bf","표현":"直面现实 (zhímiàn xiànshí)","언어":"🇨🇳 중국어","뜻":"현실을 직시하다","예문":"不要回避问题，要直面现实。(문제를 회피하지 말고 현실을 직시해야 한다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"동기부여/조언 대화에서 자주 사용","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-819a-b41e-c56402e9a2bc","표현":"高峰期 (gāofēngqī)","언어":"🇨🇳 중국어","뜻":"성수기, 피크타임, 러시아워","예문":"避开高峰期出行。(피크타임을 피해서 이동해.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"淡季의 반대. 교통/여행/비즈니스 모두에서 사용. 早晚高峰 = 아침저녁 러시아워","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81b6-825a-cc2daaa04e6b","표현":"淡季 (dànjì)","언어":"🇨🇳 중국어","뜻":"비수기","예문":"淡季旅游更便宜。(비수기에 여행하면 더 저렴하다.)","카테고리":["여행"],"난이도":"⭐⭐ 중급","메모":"高峰期/旺季의 반대. 旅游淡季 = 여행 비수기","복습횟수":0,"완전암기":false,"다음복습":"2026-06-24","추가날짜":"2026-06-24"}];
+  const SEED_DATA = [{"id":"3891443c-87b4-81fc-ba81-f81dfe34506d","표현":"お疲れ様です","언어":"🇯🇵 일본어","뜻":"수고하셨습니다 / 고생하셨습니다","예문":"今日もお疲れ様です！(오늘도 수고하셨습니다!)","카테고리":["인사","비즈니스"],"난이도":"⭐ 초급","메모":"직장에서 자주 쓰는 인사말. 퇴근할 때, 이메일 끝에도 사용","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8126-bb98-d56ee9681612","표현":"随便 (suíbiàn)","언어":"🇨🇳 중국어","뜻":"마음대로 / 아무거나 / 상관없어","예문":"你想吃什么？随便。(뭐 먹고 싶어? 아무거나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"매우 자주 쓰이는 표현. 부정적 뉘앙스로도 쓰일 수 있으니 주의","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8116-9601-d934717634ac","표현":"なるほど","언어":"🇯🇵 일본어","뜻":"그렇구나 / 아하 / 과연","예문":"なるほど、そういうことか。(그렇구나, 그런 거였구나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"상대방 말에 공감하거나 이해할 때 씀","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-818f-98a2-d22db74c3aed","표현":"探店 (tàn diàn)","언어":"🇨🇳 중국어","뜻":"맛집·카페를 직접 방문해 리뷰하다","예문":"周末一起去探店吧。(주말에 같이 맛집 탐방 가자.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"SNS 유행어","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81d2-beff-c6e57949d9d9","표현":"摊位 (tān wèi)","언어":"🇨🇳 중국어","뜻":"노점, 부스, 매대","예문":"夜市有很多摊位。(야시장에 노점이 많다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"노점 표현 중 가장 일반적","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8125-a719-ff23ebc20600","표현":"档口 (dàng kǒu)","언어":"🇨🇳 중국어","뜻":"시장·푸드코트 안의 작은 매장","예문":"这个档口卖海鲜。(이 매장은 해산물을 판다.)","카테고리":["음식"],"난이도":"⭐⭐ 중급","메모":"广东 방언에서 온 표현","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c8-b273-f7545a77734f","표현":"摊点 (tāndiǎn)","언어":"🇨🇳 중국어","뜻":"노점, 가판대","예문":"这里有很多摊点。(여기 노점이 많아.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"摊位보다 덜 쓰이지만 같은 의미","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811d-8a5b-f85740d54f06","표현":"店铺 (diànpù)","언어":"🇨🇳 중국어","뜻":"가게, 상점","예문":"他开了一家店铺。(그는 가게를 하나 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"商店보다 구어적","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8167-a5b3-c511c819bff8","표현":"小店 (xiǎodiàn)","언어":"🇨🇳 중국어","뜻":"작은 가게, 소규모 점포","예문":"我开了一家小店。(나는 작은 가게를 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"친근하고 소박한 뉘앙스","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c1-be4b-f2823a80cf66","표현":"教导 (jiàodǎo)","언어":"🇨🇳 중국어","뜻":"가르치다, 지도하다","예문":"老师耐心地教导学生。(선생님이 학생들을 인내심 있게 가르친다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"단순 teach보다 인격적 지도 뉘앙스","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811a-822d-f52be3c56a3c","표현":"家教 (jiājiào)","언어":"🇨🇳 중국어","뜻":"개인 과외 선생님 / 가정교육","예문":"我请了一个家教帮孩子补课。(아이 보충수업을 위해 과외 선생님을 구했다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"맥락에 따라 두 가지 뜻","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-8cc7-e20cef7e4c9a","표현":"辅导老师 (fǔdǎo lǎoshī)","언어":"🇨🇳 중국어","뜻":"튜터, 지도교사","예문":"辅导老师每周来两次。(지도교사가 일주일에 두 번 온다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"家教보다 공식적인 느낌","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-b95a-e5be8e9e406c","표현":"轮班工作 (lúnbān gōngzuò)","언어":"🇨🇳 중국어","뜻":"교대근무를 하다","예문":"我在轮班工作。(저는 교대근무를 하고 있습니다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"파일럿·간호사 등 직업 얘기할 때","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8164-9fe9-fcc248a4d0b4","표현":"地勤 (dìqín)","언어":"🇨🇳 중국어","뜻":"지상직, 공항 지상근무 직원","예문":"她是机场的地勤人员。(그녀는 공항 지상직 직원이다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"飞行员(파일럿)과 대비되는 개념","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812a-b6d2-efdc20efcd81","표현":"通勤 (tōngqín)","언어":"🇨🇳 중국어","뜻":"통근하다","예문":"我每天坐地铁通勤。(저는 매일 지하철로 통근합니다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"通勤时间 = 출퇴근 시간","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811e-bdab-d229a99a809c","표현":"禽兽 (qínshòu)","언어":"🇨🇳 중국어","뜻":"금수, 짐승 (욕설)","예문":"他真是个禽兽！(그는 정말 짐승 같은 놈이야!)","카테고리":["감정"],"난이도":"⭐⭐ 중급","메모":"원래 뜻은 날짐승과 들짐승이지만 욕설로 많이 씀","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8114-b84c-feea893e6f41","표현":"禽兽不如 (qínshòu bùrú)","언어":"🇨🇳 중국어","뜻":"금수만도 못하다","예문":"你简直禽兽不如！","카테고리":["감정"],"난이도":"⭐⭐⭐ 고급","메모":"강한 비난 표현","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8146-8da5-e7ab97519aa9","표현":"兼职 (jiānzhí)","언어":"🇨🇳 중국어","뜻":"아르바이트, 부업, 겸직하다","예문":"我周末做兼职。(저는 주말에 부업을 합니다.)","카테고리":["비즈니스"],"난이도":"⭐ 초급","메모":"打工보다 정식 느낌","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8100-a34a-d2009f3922f8","표현":"盈亏 (yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익 (이익과 손실)","예문":"今年公司的盈亏情况怎么样？","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"盈=이익, 亏=손실","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81bf-93ff-caab695cf991","표현":"赚钱 (zhuànqián)","언어":"🇨🇳 중국어","뜻":"돈을 벌다","예문":"他靠投资赚钱。(그는 투자로 돈을 번다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赔钱과 반대 쌍으로 외우기","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812b-a636-f522ae2d652d","표현":"赔钱 (péiqián)","언어":"🇨🇳 중국어","뜻":"돈을 잃다, 손해보다","예문":"这次投资赔钱了。(이번 투자에서 손해 봤어.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赚钱의 반대","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81cf-8d3f-ca93d9dace18","표현":"年年有余 (niánnián yǒuyú)","언어":"🇨🇳 중국어","뜻":"해마다 풍족하다 (새해 덕담)","예문":"祝你年年有余！","카테고리":["인사"],"난이도":"⭐⭐ 중급","메모":"중국 신년 대표 덕담","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8169-809a-e687683dddc0","표현":"被坑 (bèi kēng)","언어":"🇨🇳 중국어","뜻":"당하다, 사기당하다","예문":"我被坑了！(나 당했어!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"坑=구덩이. 구어체에서 매우 자주 씀","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c9-9f97-cb4307c28b7a","표현":"调侃 (tiáokǎn)","언어":"🇨🇳 중국어","뜻":"놀리다, 농담하다","예문":"别调侃我了。(그만 놀려.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"악의 없는 장난/놀림","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-815d-ab54-f7ea8e2dc8c9","표현":"避开 (bìkāi)","언어":"🇨🇳 중국어","뜻":"피하다, 비켜가다","예문":"避开高峰期出行更轻松。","카테고리":["일상"],"난이도":"⭐ 초급","메모":"回避보다 물리적으로 피하는 느낌","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-819a-b41e-c56402e9a2bc","표현":"高峰期 (gāofēngqī)","언어":"🇨🇳 중국어","뜻":"성수기, 피크타임, 러시아워","예문":"避开高峰期出行。","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"淡季의 반대","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81b6-825a-cc2daaa04e6b","표현":"淡季 (dànjì)","언어":"🇨🇳 중국어","뜻":"비수기","예문":"淡季旅游更便宜。","카테고리":["여행"],"난이도":"⭐⭐ 중급","메모":"高峰期/旺季의 반대","추가날짜":"2026-06-24"}];
 
   let expressions = [];
   let progress = {};
@@ -609,8 +426,35 @@
   let currentFilter = 'all';
   let searchQuery = '';
 
-  // ── Firebase ──────────────────────────────────────────────
+  // ── Quiz state ────────────────────────────────────────────
+  let quizQueue = [];
+  let quizIndex = 0;
+  let quizScore = 0;
+  let quizAnswered = false;
+  let quizMode = 'expr'; // 'expr'=표현→뜻, 'meaning'=뜻→표현
 
+  // ── Dark mode ─────────────────────────────────────────────
+  function initDark() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.getElementById('darkBtn').textContent = '☀️';
+    }
+  }
+  function toggleDark() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      document.getElementById('darkBtn').textContent = '🌙';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      document.getElementById('darkBtn').textContent = '☀️';
+    }
+  }
+
+  // ── Firebase ──────────────────────────────────────────────
   async function loadExpressions() {
     const r = await fetch(`${FIREBASE_URL}/expressions.json`);
     if (!r.ok) throw new Error(`Firebase 오류: ${r.status}`);
@@ -625,8 +469,7 @@
 
   async function saveExpressionsToFirebase() {
     const r = await fetch(`${FIREBASE_URL}/expressions.json`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(expressions.map(e => stripProgress(e)))
     });
     if (!r.ok) throw new Error(`저장 실패: ${r.status}`);
@@ -637,23 +480,16 @@
     return rest;
   }
 
-  // ── 개인 복습 기록 (localStorage) ────────────────────────
-
+  // ── Progress ──────────────────────────────────────────────
   function loadProgress() {
     try { progress = JSON.parse(localStorage.getItem('lang_progress') || '{}'); }
     catch { progress = {}; }
   }
-
-  function saveProgress() {
-    localStorage.setItem('lang_progress', JSON.stringify(progress));
-  }
-
+  function saveProgress() { localStorage.setItem('lang_progress', JSON.stringify(progress)); }
   function getMerged(expr) {
     const p = progress[expr.id] || { 복습횟수: 0, 다음복습: today(), 완전암기: false };
     return { ...expr, ...p };
   }
-
-  // ── Spaced repetition ─────────────────────────────────────
 
   function today() { return new Date().toISOString().slice(0,10); }
   function isDue(e) { return !e.완전암기 || e.다음복습 <= today(); }
@@ -667,11 +503,10 @@
   }
 
   // ── TTS ───────────────────────────────────────────────────
-
   function speak(text, lang) {
-    if (!window.speechSynthesis) { showToast('이 브라우저는 TTS를 지원하지 않아요'); return; }
+    if (!window.speechSynthesis) { showToast('TTS 미지원 브라우저'); return; }
     speechSynthesis.cancel();
-    const clean = text.replace(/\s*\([^)]*\)/g, '').trim(); // 괄호 안 발음 기호 제거
+    const clean = text.replace(/\s*\([^)]*\)/g, '').trim();
     const u = new SpeechSynthesisUtterance(clean);
     u.lang = lang.includes('중국어') ? 'zh-CN' : 'ja-JP';
     u.rate = 0.85;
@@ -679,7 +514,6 @@
   }
 
   // ── Tab nav ───────────────────────────────────────────────
-
   function switchTab(tab, btn) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -687,10 +521,35 @@
     if (btn) btn.classList.add('active');
     if (tab === 'list') renderList();
     if (tab === 'chat') initChat();
+    if (tab === 'quiz') startQuiz();
+  }
+
+  // ── Confetti ──────────────────────────────────────────────
+  function launchConfetti() {
+    const colors = ['#6c63ff','#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff922b','#cc5de8'];
+    const wrap = document.createElement('div');
+    wrap.className = 'confetti-wrap';
+    document.body.appendChild(wrap);
+    for (let i = 0; i < 80; i++) {
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*6}px;height:${8+Math.random()*8}px;animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*0.8}s;transform:rotate(${Math.random()*360}deg)`;
+      wrap.appendChild(p);
+    }
+    setTimeout(() => wrap.remove(), 4000);
+  }
+
+  // ── Share (카카오톡) ──────────────────────────────────────
+  function shareExpression(expr, meaning, lang) {
+    const text = `🗣️ 오늘의 외국어 표현\n\n${expr}\n뜻: ${meaning}\n\n언어학습 앱에서 보기: https://dfivestones.github.io/language-app/`;
+    if (navigator.share) {
+      navigator.share({ title: '외국어 표현 공유', text }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(text).then(() => showToast('📋 클립보드에 복사됐어요!'));
+    }
   }
 
   // ── Review ────────────────────────────────────────────────
-
   function renderReview() {
     const merged = expressions.map(getMerged);
     reviewQueue = merged.filter(e => !e.완전암기 && isDue(e));
@@ -702,9 +561,24 @@
       const mastered = merged.filter(e => e.완전암기).length;
       const cn = expressions.filter(e => e.언어.includes('중국어')).length;
       const jp = expressions.filter(e => e.언어.includes('일본어')).length;
+      const todayExprs = expressions.filter(e => e.추가날짜 === today());
+
+      const feedHtml = todayExprs.length ? `
+        <div class="feed-section">
+          <div class="feed-title">📅 오늘 추가된 표현 (${todayExprs.length}개)</div>
+          ${todayExprs.map(e => `
+            <div class="feed-card">
+              <div>
+                <div class="feed-expr">${e.표현}</div>
+                <div class="feed-meaning">${e.뜻}</div>
+              </div>
+              <button onclick="speak('${e.표현.replace(/'/g,"\\'")}','${e.언어.replace(/'/g,"\\'")}');event.stopPropagation()" class="icon-btn" style="font-size:16px">🔊</button>
+            </div>`).join('')}
+        </div>` : '';
+
       document.getElementById('review-content').innerHTML = `
         <div class="stats-card">
-          <div style="font-size:15px;font-weight:800;color:var(--t1)">📊 내 학습 현황</div>
+          <div style="font-size:15px;font-weight:800">📊 내 학습 현황</div>
           <div class="stats-grid">
             <div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">전체 표현</div></div>
             <div class="stat-item"><div class="stat-num" style="color:#1e9945">${mastered}</div><div class="stat-label">암기 완료</div></div>
@@ -722,9 +596,13 @@
         <div class="review-done">
           <div class="done-emoji">🎉</div>
           <div class="done-title">오늘 복습 완료!</div>
-          <div class="done-sub">복습할 표현이 없어요.<br>새 표현을 추가해볼까요?</div>
-          <button class="btn btn-primary" onclick="switchTab('add', document.querySelectorAll('.nav-btn')[1])">➕ 표현 추가하기</button>
-        </div>`;
+          <div class="done-sub">복습할 표현이 없어요.<br>퀴즈로 실력을 테스트해볼까요?</div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="switchTab('quiz', document.querySelectorAll('.nav-btn')[1])">🎯 퀴즈 하기</button>
+            <button class="btn btn-secondary" onclick="switchTab('add', document.querySelectorAll('.nav-btn')[2])">➕ 표현 추가</button>
+          </div>
+        </div>
+        ${feedHtml}`;
       return;
     }
     showCard();
@@ -732,19 +610,23 @@
 
   function showCard() {
     if (reviewIndex >= reviewQueue.length) {
+      launchConfetti();
       document.getElementById('review-content').innerHTML = `
         <div class="review-done">
           <div class="done-emoji">🏆</div>
           <div class="done-title">모두 완료!</div>
-          <div class="done-sub">${reviewQueue.length}개 표현을 복습했어요.</div>
-          <button class="btn btn-secondary" onclick="renderReview()">다시 보기</button>
+          <div class="done-sub">${reviewQueue.length}개 표현을 복습했어요. 대단해요! 🎉</div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="switchTab('quiz', document.querySelectorAll('.nav-btn')[1])">🎯 퀴즈 도전</button>
+            <button class="btn btn-secondary" onclick="renderReview()">다시 보기</button>
+          </div>
         </div>`;
       return;
     }
     const e = reviewQueue[reviewIndex];
     const pct = Math.round((reviewIndex / reviewQueue.length) * 100);
-    const exprEscaped = e.표현.replace(/'/g, "\\'");
-    const langEscaped = e.언어.replace(/'/g, "\\'");
+    const exprEsc = e.표현.replace(/'/g, "\\'");
+    const langEsc = e.언어.replace(/'/g, "\\'");
     document.getElementById('review-content').innerHTML = `
       <div class="progress-wrap">
         <div class="progress-label"><span>${reviewIndex + 1} / ${reviewQueue.length}</span><span>${pct}%</span></div>
@@ -765,7 +647,7 @@
         </div>
       </div>
       <div class="card-tts-row">
-        <button class="card-tts-btn" onclick="speak('${exprEscaped}','${langEscaped}')">🔊 발음 듣기</button>
+        <button class="card-tts-btn" onclick="speak('${exprEsc}','${langEsc}')">🔊 발음 듣기</button>
       </div>
       <div id="review-btns" style="display:none">
         <div class="review-btns">
@@ -802,27 +684,113 @@
     showCard();
   }
 
-  // ── Add ───────────────────────────────────────────────────
+  // ── Quiz ──────────────────────────────────────────────────
+  function setQuizMode(mode, btn) {
+    quizMode = mode;
+    document.querySelectorAll('.quiz-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    startQuiz();
+  }
 
+  function startQuiz() {
+    if (expressions.length < 4) {
+      document.getElementById('quiz-content').innerHTML = `<div class="empty-state"><div class="empty-icon">📚</div><p>퀴즈를 하려면 표현이 4개 이상 필요해요</p></div>`;
+      return;
+    }
+    const shuffled = [...expressions].sort(() => Math.random() - 0.5);
+    quizQueue = shuffled.slice(0, Math.min(10, shuffled.length));
+    quizIndex = 0;
+    quizScore = 0;
+    showQuizQuestion();
+  }
+
+  function showQuizQuestion() {
+    if (quizIndex >= quizQueue.length) {
+      showQuizResult();
+      return;
+    }
+    quizAnswered = false;
+    const correct = quizQueue[quizIndex];
+    // Pick 3 wrong answers
+    const others = expressions.filter(e => e.id !== correct.id).sort(() => Math.random() - 0.5).slice(0, 3);
+    const choices = [...others, correct].sort(() => Math.random() - 0.5);
+
+    const isExprMode = quizMode === 'expr';
+    const questionText = isExprMode ? correct.표현 : correct.뜻;
+    const questionLabel = isExprMode ? '이 표현의 뜻은?' : '이 뜻의 표현은?';
+
+    const choicesHtml = choices.map(c => {
+      const choiceText = isExprMode ? c.뜻 : c.표현;
+      return `<button class="quiz-choice" onclick="quizAnswer(this, '${c.id}', '${correct.id}')">${choiceText}</button>`;
+    }).join('');
+
+    document.getElementById('quiz-content').innerHTML = `
+      <div class="quiz-header">
+        <div style="font-size:12px;color:var(--t3);font-weight:600">${quizIndex + 1} / ${quizQueue.length} &nbsp;·&nbsp; 점수: ${quizScore}</div>
+        <div class="progress-bar" style="margin-top:8px;max-width:320px;margin-left:auto;margin-right:auto">
+          <div class="progress-fill" style="width:${(quizIndex/quizQueue.length)*100}%"></div>
+        </div>
+      </div>
+      <div class="quiz-question-card">
+        <div class="quiz-q-label">${questionLabel}</div>
+        <div class="quiz-q-text">${questionText}</div>
+        ${correct.언어 ? `<div class="quiz-q-sub">${correct.언어}</div>` : ''}
+      </div>
+      <div class="quiz-choices">${choicesHtml}</div>`;
+  }
+
+  function quizAnswer(btn, selectedId, correctId) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+    const isCorrect = selectedId === correctId;
+    if (isCorrect) quizScore++;
+
+    // Highlight all choices
+    document.querySelectorAll('.quiz-choice').forEach(b => {
+      const bId = b.getAttribute('onclick').match(/'([^']+)', '([^']+)'\)/)?.[1];
+      if (bId === correctId) b.classList.add('correct');
+    });
+    if (!isCorrect) btn.classList.add('wrong');
+
+    setTimeout(() => {
+      quizIndex++;
+      showQuizQuestion();
+    }, 1000);
+  }
+
+  function showQuizResult() {
+    const pct = Math.round((quizScore / quizQueue.length) * 100);
+    let emoji = pct >= 80 ? '🏆' : pct >= 60 ? '😊' : '💪';
+    let msg = pct >= 80 ? '훌륭해요!' : pct >= 60 ? '잘 했어요!' : '더 연습해봐요!';
+    if (pct === 100) launchConfetti();
+    document.getElementById('quiz-content').innerHTML = `
+      <div class="quiz-result">
+        <div style="font-size:64px;margin-bottom:12px">${emoji}</div>
+        <div class="quiz-score">${quizScore} / ${quizQueue.length}</div>
+        <div style="font-size:14px;color:var(--t2);margin:8px 0 20px;font-weight:600">${pct}% 정답 · ${msg}</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="startQuiz()">🔄 다시 하기</button>
+          <button class="btn btn-secondary" onclick="switchTab('review', document.querySelectorAll('.nav-btn')[0])">📚 복습 하기</button>
+        </div>
+      </div>`;
+  }
+
+  // ── Add ───────────────────────────────────────────────────
   async function addExpression() {
     const 표현 = document.getElementById('add-expr').value.trim();
     const 뜻 = document.getElementById('add-meaning').value.trim();
     const 언어 = document.getElementById('add-lang').value;
     if (!표현 || !뜻) { showToast('표현과 뜻은 필수입니다'); return; }
-
     const status = document.getElementById('add-status');
     status.textContent = '💾 저장 중...';
-
     const newExpr = {
-      id: 'u-' + Date.now(),
-      표현, 언어, 뜻,
+      id: 'u-' + Date.now(), 표현, 언어, 뜻,
       예문: document.getElementById('add-example').value.trim(),
       카테고리: document.getElementById('add-category').value,
       난이도: document.getElementById('add-level').value,
       메모: document.getElementById('add-memo').value.trim(),
       추가날짜: today()
     };
-
     try {
       expressions.push(newExpr);
       await saveExpressionsToFirebase();
@@ -838,84 +806,64 @@
     }
   }
 
-  // ── List (Search + Filter + Bookmark + Delete) ────────────
-
-  function setSearch(q) {
-    searchQuery = q;
-    renderList();
-  }
-
+  // ── List ──────────────────────────────────────────────────
+  function setSearch(q) { searchQuery = q; renderList(); }
   function setFilter(f, btn) {
     currentFilter = f;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     renderList();
   }
-
   function toggleBookmark(id) {
     if (!progress[id]) progress[id] = { 복습횟수: 0, 완전암기: false, 다음복습: today() };
     progress[id].bookmark = !progress[id].bookmark;
-    saveProgress();
-    renderList();
+    saveProgress(); renderList();
     showToast(progress[id].bookmark ? '⭐ 즐겨찾기 추가!' : '즐겨찾기 해제');
   }
-
   async function deleteExpression(id) {
     if (!confirm('이 표현을 삭제하시겠습니까?')) return;
     expressions = expressions.filter(e => e.id !== id);
     try {
       await saveExpressionsToFirebase();
-      delete progress[id];
-      saveProgress();
-      renderList();
-      updateStats();
+      delete progress[id]; saveProgress(); renderList(); updateStats();
       showToast('🗑️ 삭제됐어요');
-    } catch (err) {
-      showToast('삭제 실패: ' + err.message);
-    }
+    } catch (err) { showToast('삭제 실패: ' + err.message); }
   }
 
   function renderList() {
     let list = expressions.map(getMerged);
-
-    // 검색 필터
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       list = list.filter(e =>
-        (e.표현 || '').toLowerCase().includes(q) ||
-        (e.뜻 || '').toLowerCase().includes(q) ||
-        (e.예문 || '').toLowerCase().includes(q) ||
-        (e.메모 || '').toLowerCase().includes(q)
-      );
+        (e.표현||'').toLowerCase().includes(q) || (e.뜻||'').toLowerCase().includes(q) ||
+        (e.예문||'').toLowerCase().includes(q) || (e.메모||'').toLowerCase().includes(q));
     }
-
-    // 카테고리 필터
     if (currentFilter === 'cn') list = list.filter(e => e.언어.includes('중국어'));
     else if (currentFilter === 'jp') list = list.filter(e => e.언어.includes('일본어'));
     else if (currentFilter === 'due') list = list.filter(e => !e.완전암기 && isDue(e));
     else if (currentFilter === 'mastered') list = list.filter(e => e.완전암기);
     else if (currentFilter === 'bookmark') list = list.filter(e => e.bookmark);
-
     if (!list.length) {
       document.getElementById('list-content').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>${searchQuery ? '검색 결과가 없습니다' : '표현이 없습니다'}</p></div>`;
       return;
     }
-
     document.getElementById('list-content').innerHTML = list.map(e => {
       const langClass = e.언어.includes('중국어') ? 'badge-cn' : 'badge-jp';
       const isOverdue = !e.완전암기 && isDue(e);
       const isBookmarked = !!e.bookmark;
-      const exprEsc = e.표현.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-      const langEsc = e.언어.replace(/'/g, "\\'");
+      const exprEsc = e.표현.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+      const langEsc = e.언어.replace(/'/g,"\\'");
+      const meaningEsc = e.뜻.replace(/'/g,"\\'");
       return `<div class="expr-card">
         <div class="expr-card-top">
           <span class="badge ${langClass}">${e.언어}</span>
           ${isOverdue ? '<span class="badge badge-due">📅 복습 필요</span>' : ''}
           ${e.완전암기 ? '<span class="badge badge-done">✅ 암기완료</span>' : ''}
           <div class="expr-card-top-right">
-            <button class="expr-action-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${e.id}')" title="즐겨찾기">⭐</button>
-            <button class="expr-action-btn" onclick="speak('${exprEsc}','${langEsc}')" title="발음 듣기">🔊</button>
-            <button class="expr-action-btn" onclick="deleteExpression('${e.id}')" title="삭제" style="color:#ffb3b3">🗑️</button>
+            <button class="expr-action-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${e.id}')">⭐</button>
+            <button class="expr-action-btn" onclick="speak('${exprEsc}','${langEsc}')">🔊</button>
+            <button class="expr-action-btn" onclick="shareExpression('${exprEsc}','${meaningEsc}','${langEsc}')">📤</button>
+            <button class="expr-action-btn" onclick="deleteExpression('${e.id}')" style="color:#ffb3b3">🗑️</button>
           </div>
         </div>
         <div class="expr-title">${e.표현}</div>
@@ -924,55 +872,42 @@
         <div class="expr-tags">
           ${Array.isArray(e.카테고리) ? e.카테고리.map(c=>`<span class="tag">${c}</span>`).join('') : e.카테고리 ? `<span class="tag">${e.카테고리}</span>` : ''}
           ${e.난이도 ? `<span class="tag">${e.난이도}</span>` : ''}
-          <span class="tag">내 복습 ${e.복습횟수 || 0}회</span>
+          <span class="tag">내 복습 ${e.복습횟수||0}회</span>
         </div>
         ${e.메모 ? `<div class="expr-memo">💡 ${e.메모}</div>` : ''}
-        <div class="expr-footer">추가: ${e.추가날짜 || '-'} ${e.다음복습 ? '· 다음복습: ' + e.다음복습 : ''}</div>
+        <div class="expr-footer">추가: ${e.추가날짜||'-'}${e.다음복습 ? ' · 다음복습: '+e.다음복습 : ''}</div>
       </div>`;
     }).join('');
   }
 
   // ── Utils ─────────────────────────────────────────────────
-
   function updateStats() {
     const merged = expressions.map(getMerged);
     const due = merged.filter(e => !e.완전암기 && isDue(e)).length;
     const total = expressions.length;
     const mastered = merged.filter(e => e.완전암기).length;
-    document.getElementById('headerStats').textContent = `총 ${total}개 · 오늘 ${due}개 · 완료 ${mastered}개`;
+    document.getElementById('headerStats').textContent = `총 ${total} · 오늘 ${due} · 완료 ${mastered}`;
   }
-
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     clearTimeout(t._timer);
     t._timer = setTimeout(() => t.classList.remove('show'), 2400);
   }
-
-  // ── Refresh ───────────────────────────────────────────────
-
   async function refreshData() {
     const btn = document.getElementById('refreshBtn');
     btn.style.animation = 'spin 0.7s linear infinite';
     try {
-      await loadExpressions();
-      renderReview();
-      updateStats();
-      if (currentFilter !== 'all') renderList();
+      await loadExpressions(); renderReview(); updateStats();
       showToast('✅ 최신 단어 불러왔어요!');
-    } catch (err) {
-      showToast('새로고침 실패: ' + err.message);
-    } finally {
-      btn.style.animation = '';
-    }
+    } catch (err) { showToast('새로고침 실패: ' + err.message); }
+    finally { btn.style.animation = ''; }
   }
 
   // ── AI Chat ───────────────────────────────────────────────
-
   function getVocabContext() {
-    if (!expressions || !expressions.length) return '';
-    const list = expressions.slice(0, 100).map(e => e.표현).join(', ');
+    if (!expressions?.length) return '';
+    const list = expressions.slice(0,100).map(e=>e.표현).join(', ');
     return `\n\n=== 사용자의 현재 단어장 (${expressions.length}개) ===\n${list}\n\n위 단어장에 이미 있는 표현이면 [이미 학습 중 ✓]으로 표시만 하고, 새로운 표현 위주로 [EXPR] 태그로 감싸서 추천해주세요.`;
   }
 
@@ -991,7 +926,7 @@
 - 표현이 없는 일반 질문에는 [EXPR] 태그 생략 가능
 - 파이프(|) 구분자로 정확히 6개 항목
 
-사진을 받으면: 사진 속 중국어/일본어 텍스트를 모두 인식하고 뜻·발음·뉘앙스를 설명한 뒤 [EXPR] 태그로 감싸주세요. 메뉴판, 간판, 책, 스크린샷 등 어떤 사진이든 처리하세요.`;
+사진을 받으면: 사진 속 중국어/일본어 텍스트를 모두 인식하고 뜻·발음·뉘앙스를 설명한 뒤 [EXPR] 태그로 감싸주세요.`;
 
   let chatHistory = [];
   const chatExprStore = {};
@@ -1014,11 +949,7 @@
             if (!this.value.trim()) hidePasteBar();
           });
           ta.addEventListener('paste', function() {
-            setTimeout(() => {
-              if (/[぀-ヿ一-鿿豈-﫿]/.test(this.value)) {
-                showPasteBar();
-              }
-            }, 50);
+            setTimeout(() => { if (/[぀-ヿ一-鿿豈-﫿]/.test(this.value)) showPasteBar(); }, 50);
           });
         }
       }
@@ -1033,192 +964,117 @@
     if (!key) { showToast('API 키를 입력해주세요'); return; }
     localStorage.setItem('anthropic_api_key', key);
     document.getElementById('apikey-input').value = '';
-    chatInited = false;
-    initChat();
+    chatInited = false; initChat();
   }
-
   function clearApiKey() {
     if (!confirm('API 키를 삭제하고 초기화면으로 돌아갑니까?')) return;
     localStorage.removeItem('anthropic_api_key');
-    chatHistory = [];
-    chatInited = false;
+    chatHistory = []; chatInited = false;
     document.getElementById('chat-messages').innerHTML = '';
     initChat();
   }
-
   function resetChat() {
     chatHistory = [];
     document.getElementById('chat-messages').innerHTML = '';
     Object.keys(chatExprStore).forEach(k => delete chatExprStore[k]);
     showWelcomeChatMsg();
   }
-
   function showWelcomeChatMsg() {
     appendChatBubble('assistant', '안녕하세요! 중국어나 일본어 표현에 대해 뭐든 물어보세요 😊\n\n예시:\n• "화가 났을 때 쓰는 중국어 표현 알려줘"\n• "비즈니스 일본어 이메일 인사말은?"\n• 📷 사진 찍어서 올리면 텍스트 인식해서 설명해줘요!\n\n관련 표현에 체크하면 단어장에 바로 추가할 수 있어요!');
   }
-
-  // ── 빠른 액션 & 붙여넣기 감지 ─────────────────────────────
 
   function quickAction(action, standalone) {
     const input = document.getElementById('chat-input');
     const current = input.value.trim();
     hidePasteBar();
-    if (standalone) {
-      input.value = action;
-      sendChatMessage();
-    } else if (current) {
-      input.value = current + ' — ' + action;
-      sendChatMessage();
-    } else {
+    if (standalone) { input.value = action; sendChatMessage(); }
+    else if (current) { input.value = current + ' — ' + action; sendChatMessage(); }
+    else {
       input.focus();
       const orig = input.placeholder;
       input.placeholder = action + '할 표현을 입력하세요...';
       setTimeout(() => { input.placeholder = orig; }, 4000);
     }
   }
-
-  function showPasteBar() {
-    document.getElementById('paste-bar').style.display = 'flex';
-  }
-
-  function hidePasteBar() {
-    document.getElementById('paste-bar').style.display = 'none';
-  }
-
+  function showPasteBar() { document.getElementById('paste-bar').style.display = 'flex'; }
+  function hidePasteBar() { document.getElementById('paste-bar').style.display = 'none'; }
   function pasteAction(type) {
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
-    hidePasteBar();
-    if (!text) return;
-    if (type === '번역') {
-      input.value = text + ' — 한국어로 번역해줘';
-    } else {
-      input.value = text + ' — 자세히 분석해줘 (뜻, 발음, 뉘앙스, 예문 포함)';
-    }
+    hidePasteBar(); if (!text) return;
+    input.value = type === '번역' ? text + ' — 한국어로 번역해줘' : text + ' — 자세히 분석해줘 (뜻, 발음, 뉘앙스, 예문 포함)';
     sendChatMessage();
   }
-
-  function chatKeydown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendChatMessage();
-    }
-  }
-
+  function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }
   function handleImageSelect(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUrl = e.target.result;
-      pendingImage = { data: dataUrl.split(',')[1], mediaType: file.type || 'image/jpeg', previewUrl: dataUrl };
+      pendingImage = { data: dataUrl.split(',')[1], mediaType: file.type||'image/jpeg', previewUrl: dataUrl };
       document.getElementById('img-preview').src = dataUrl;
       document.getElementById('img-preview-wrap').style.display = 'block';
     };
-    reader.readAsDataURL(file);
-    event.target.value = '';
+    reader.readAsDataURL(file); event.target.value = '';
   }
-
   function removeImage() {
     pendingImage = null;
     document.getElementById('img-preview-wrap').style.display = 'none';
     document.getElementById('img-preview').src = '';
   }
-
   function parseExprs(text) {
-    const exprs = [];
-    const regex = /\[EXPR\]([\s\S]*?)\[\/EXPR\]/g;
-    let m;
+    const exprs = []; const regex = /\[EXPR\]([\s\S]*?)\[\/EXPR\]/g; let m;
     while ((m = regex.exec(text)) !== null) {
-      const parts = m[1].split('|').map(s => s.trim());
+      const parts = m[1].split('|').map(s=>s.trim());
       if (parts.length >= 2 && parts[0] && parts[1]) {
-        exprs.push({
-          id: 'ai-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
-          표현: parts[0] || '',
-          뜻: parts[1] || '',
-          예문: parts[2] || '',
-          메모: parts[3] || '',
-          난이도: parts[4] || '⭐ 초급',
-          언어: parts[5] || '🇨🇳 중국어',
-          카테고리: '일상',
-          추가날짜: today()
-        });
+        exprs.push({ id:'ai-'+Date.now()+'-'+Math.random().toString(36).slice(2,7), 표현:parts[0], 뜻:parts[1], 예문:parts[2]||'', 메모:parts[3]||'', 난이도:parts[4]||'⭐ 초급', 언어:parts[5]||'🇨🇳 중국어', 카테고리:'일상', 추가날짜:today() });
       }
     }
     return exprs;
   }
-
-  function cleanMsgText(text) {
-    return text.replace(/\[EXPR\][\s\S]*?\[\/EXPR\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
-  }
+  function cleanMsgText(text) { return text.replace(/\[EXPR\][\s\S]*?\[\/EXPR\]/g,'').replace(/\n{3,}/g,'\n\n').trim(); }
 
   function appendChatBubble(role, content, msgId, imageUrl) {
-    const exprs = (role === 'assistant' && msgId) ? parseExprs(content) : [];
+    const exprs = (role==='assistant'&&msgId) ? parseExprs(content) : [];
     const cleanContent = cleanMsgText(content);
     const container = document.getElementById('chat-messages');
-
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${role}`;
     const imgHtml = imageUrl ? `<img src="${imageUrl}" class="bubble-img">` : '';
-    bubble.innerHTML = `<div class="bubble-text">${imgHtml}${cleanContent.replace(/\n/g, '<br>')}</div>`;
-
+    bubble.innerHTML = `<div class="bubble-text">${imgHtml}${cleanContent.replace(/\n/g,'<br>')}</div>`;
     if (exprs.length > 0) {
       chatExprStore[msgId] = exprs;
-      const cards = exprs.map((e, i) => {
+      const cards = exprs.map((e,i) => {
         const langCls = e.언어.includes('중국어') ? 'badge-cn' : 'badge-jp';
-        return `<label class="expr-check-card">
-          <input type="checkbox" class="expr-checkbox" data-idx="${i}" checked>
-          <div style="flex:1;min-width:0">
-            <div class="expr-check-title">${e.표현} <span class="badge ${langCls}" style="font-size:9px">${e.언어}</span></div>
-            <div class="expr-check-meaning">${e.뜻}</div>
-            ${e.예문 ? `<div class="expr-check-example">${e.예문}</div>` : ''}
-          </div>
-        </label>`;
+        return `<label class="expr-check-card"><input type="checkbox" class="expr-checkbox" data-idx="${i}" checked><div style="flex:1;min-width:0"><div class="expr-check-title">${e.표현} <span class="badge ${langCls}" style="font-size:9px">${e.언어}</span></div><div class="expr-check-meaning">${e.뜻}</div>${e.예문?`<div class="expr-check-example">${e.예문}</div>`:''}</div></label>`;
       }).join('');
-
-      bubble.innerHTML += `
-        <div class="expr-check-section" id="exprs-${msgId}">
-          <div class="expr-check-header">📚 단어장에 추가할 표현 선택</div>
-          ${cards}
-          <button class="btn btn-primary btn-full" style="margin-top:8px;font-size:13px;padding:10px"
-            onclick="addCheckedExprs('${msgId}',this)">✅ 선택 표현 단어장에 추가</button>
-        </div>`;
+      bubble.innerHTML += `<div class="expr-check-section" id="exprs-${msgId}"><div class="expr-check-header">📚 단어장에 추가할 표현 선택</div>${cards}<button class="btn btn-primary btn-full" style="margin-top:8px;font-size:13px;padding:10px" onclick="addCheckedExprs('${msgId}',this)">✅ 선택 표현 단어장에 추가</button></div>`;
     }
-
     container.appendChild(bubble);
     container.scrollTop = container.scrollHeight;
   }
 
   async function addCheckedExprs(msgId, btn) {
-    const exprs = chatExprStore[msgId] || [];
-    const section = document.getElementById('exprs-' + msgId);
+    const exprs = chatExprStore[msgId]||[];
+    const section = document.getElementById('exprs-'+msgId);
     const checked = section.querySelectorAll('.expr-checkbox:checked');
-    const idxs = new Set([...checked].map(cb => Number(cb.dataset.idx)));
-    const toAdd = exprs.filter((_, i) => idxs.has(i));
-
-    if (toAdd.length === 0) { showToast('선택된 표현이 없습니다'); return; }
-
-    btn.disabled = true;
-    btn.textContent = '추가 중...';
-
+    const idxs = new Set([...checked].map(cb=>Number(cb.dataset.idx)));
+    const toAdd = exprs.filter((_,i)=>idxs.has(i));
+    if (toAdd.length===0) { showToast('선택된 표현이 없습니다'); return; }
+    btn.disabled = true; btn.textContent = '추가 중...';
     try {
       for (const expr of toAdd) {
-        if (!expressions.find(e => e.표현 === expr.표현)) {
-          const newId = 'ai-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
-          const entry = { ...expr, id: newId };
-          expressions.push(entry);
-          progress[newId] = { 복습횟수: 0, 완전암기: false, 다음복습: today() };
+        if (!expressions.find(e=>e.표현===expr.표현)) {
+          const newId = 'ai-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+          expressions.push({...expr, id:newId});
+          progress[newId] = { 복습횟수:0, 완전암기:false, 다음복습:today() };
         }
       }
-      await saveExpressionsToFirebase();
-      saveProgress();
-      updateStats();
-      btn.textContent = `✅ ${toAdd.length}개 추가됨!`;
-      btn.style.background = '#1e9945';
+      await saveExpressionsToFirebase(); saveProgress(); updateStats();
+      btn.textContent = `✅ ${toAdd.length}개 추가됨!`; btn.style.background = '#1e9945';
       showToast(`🎉 ${toAdd.length}개 표현이 단어장에 추가됐어요!`);
     } catch (err) {
-      btn.disabled = false;
-      btn.textContent = '✅ 선택 표현 단어장에 추가';
+      btn.disabled = false; btn.textContent = '✅ 선택 표현 단어장에 추가';
       showToast('추가 실패: ' + err.message);
     }
   }
@@ -1227,78 +1083,45 @@
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text && !pendingImage) return;
-
     const apiKey = localStorage.getItem('anthropic_api_key');
     if (!apiKey) { showToast('API 키가 없습니다'); return; }
-
-    input.value = '';
-    input.style.height = 'auto';
-
+    input.value = ''; input.style.height = 'auto';
     const imgSnap = pendingImage;
-    let userContent;
-    if (imgSnap) {
-      userContent = [
-        { type: 'image', source: { type: 'base64', media_type: imgSnap.mediaType, data: imgSnap.data } },
-        { type: 'text', text: text || '이 사진의 중국어/일본어 표현을 인식하고 설명해줘' }
-      ];
-    } else {
-      userContent = text;
-    }
-
-    appendChatBubble('user', text || '📷', null, imgSnap?.previewUrl);
-    chatHistory.push({ role: 'user', content: userContent });
+    let userContent = imgSnap ? [
+      { type:'image', source:{ type:'base64', media_type:imgSnap.mediaType, data:imgSnap.data } },
+      { type:'text', text: text||'이 사진의 중국어/일본어 표현을 인식하고 설명해줘' }
+    ] : text;
+    appendChatBubble('user', text||'📷', null, imgSnap?.previewUrl);
+    chatHistory.push({ role:'user', content:userContent });
     if (imgSnap) removeImage();
-
     const sendBtn = document.getElementById('chat-send-btn');
     sendBtn.disabled = true;
-
     const container = document.getElementById('chat-messages');
     const thinking = document.createElement('div');
     thinking.className = 'chat-thinking';
     thinking.innerHTML = '<div class="thinking-dots"><span></span><span></span><span></span></div>';
-    container.appendChild(thinking);
-    container.scrollTop = container.scrollHeight;
-
+    container.appendChild(thinking); container.scrollTop = container.scrollHeight;
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 2048,
-          system: CHAT_SYSTEM_PROMPT + getVocabContext(),
-          messages: chatHistory.map(m => ({ role: m.role, content: m.content }))
-        })
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+        body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:2048, system: CHAT_SYSTEM_PROMPT + getVocabContext(), messages: chatHistory.map(m=>({role:m.role,content:m.content})) })
       });
-
       if (thinking.parentNode) thinking.parentNode.removeChild(thinking);
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error?.message || `API 오류 ${res.status}`);
-      }
-
+      if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||`API 오류 ${res.status}`); }
       const data = await res.json();
-      const reply = data.content?.[0]?.text || '';
-      chatHistory.push({ role: 'assistant', content: reply });
-      const msgId = 'msg-' + Date.now();
+      const reply = data.content?.[0]?.text||'';
+      chatHistory.push({ role:'assistant', content:reply });
+      const msgId = 'msg-'+Date.now();
       appendChatBubble('assistant', reply, msgId);
-
     } catch (err) {
       if (thinking.parentNode) thinking.parentNode.removeChild(thinking);
       appendChatBubble('assistant', `⚠️ 오류가 발생했습니다: ${err.message}\n\nAPI 키를 확인해주세요.`);
-    } finally {
-      sendBtn.disabled = false;
-    }
+    } finally { sendBtn.disabled = false; }
   }
 
   // ── Init ──────────────────────────────────────────────────
-
+  initDark();
   (async () => {
     try {
       loadProgress();
@@ -1306,11 +1129,7 @@
       renderReview();
       updateStats();
     } catch (err) {
-      document.getElementById('review-content').innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">⚠️</div>
-          <p>데이터를 불러오지 못했습니다.<br><small style="color:#ddd">${err.message}</small></p>
-        </div>`;
+      document.getElementById('review-content').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>데이터를 불러오지 못했습니다.<br><small>${err.message}</small></p></div>`;
     }
   })();
 </script>
