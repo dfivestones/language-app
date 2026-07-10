@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>외국어 표현 복습</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="언어복습">
+  <meta name="theme-color" content="#6c63ff">
   <style>
     :root {
       --p: #6c63ff; --p2: #9c8fff; --p-dark: #5248cc; --pbg: #f0eeff;
@@ -1445,6 +1451,10 @@
       // 소셜 피드 & 닉네임
       loadActivityFeed();
       setTimeout(() => checkNickname(), 800);
+      // PWA 서비스 워커 등록
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
     } catch (err) {
       document.getElementById('review-content').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>데이터를 불러오지 못했습니다.<br><small>${err.message}</small></p></div>`;
     }
