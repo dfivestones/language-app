@@ -344,6 +344,26 @@
     .wrong-note-btn.show { display: block; }
     [data-theme="dark"] .wrong-note-btn { background: #2a1515; color: #ff6b6b; }
 
+    /* ── Settings modal ── */
+    .settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9990; display: none; align-items: flex-end; justify-content: center; }
+    .settings-overlay.show { display: flex; }
+    .settings-box { background: var(--card); border-radius: var(--r-xl) var(--r-xl) 0 0; padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); width: 100%; max-width: 520px; animation: slideUp 0.28s cubic-bezier(0.4,0,0.2,1); }
+    .settings-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 20px; }
+    .settings-title { font-size: 17px; font-weight: 800; color: var(--t1); margin-bottom: 18px; }
+    .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border2); }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-row-left { display: flex; flex-direction: column; gap: 2px; }
+    .settings-row-label { font-size: 14px; font-weight: 700; color: var(--t1); }
+    .settings-row-sub { font-size: 12px; color: var(--t3); }
+    .toggle-switch { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border2); border-radius: 100px; cursor: pointer; transition: 0.2s; }
+    .toggle-slider::before { content:''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    .toggle-switch input:checked + .toggle-slider { background: var(--p); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+    .settings-section-title { font-size: 11px; font-weight: 800; color: var(--t3); text-transform: uppercase; letter-spacing: 0.7px; margin: 16px 0 4px; }
+    .settings-csv-row { display: flex; gap: 8px; margin-top: 8px; }
+
     /* ── Practice mode ── */
     .practice-banner { padding: 8px 14px; background: linear-gradient(135deg, #0e2a18, #1a4a2e); border-bottom: 1px solid #2d6b42; display: none; align-items: center; gap: 8px; flex-shrink: 0; }
     .practice-banner.active { display: flex; }
@@ -365,6 +385,52 @@
     <div class="streak-badge cold" id="streakBadge" onclick="showStreakPopup()" title="연속 학습일">🔥 0일</div>
     <button class="icon-btn" onclick="refreshData()" id="refreshBtn" title="새로고침">↻</button>
     <button class="icon-btn" onclick="toggleDark()" id="darkBtn" title="다크모드">🌙</button>
+    <button class="icon-btn" onclick="openSettings()" title="설정">⚙️</button>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="settings-overlay" id="settingsModal">
+  <div class="settings-box">
+    <div class="settings-handle"></div>
+    <div class="settings-title">⚙️ 설정</div>
+
+    <div class="settings-section-title">🔔 알림</div>
+    <div class="settings-row">
+      <div class="settings-row-left">
+        <div class="settings-row-label">복습 알림</div>
+        <div class="settings-row-sub">앱 열었을 때 복습할 표현이 있으면 알림</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="notifToggle" onchange="toggleNotification(this.checked)" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-section-title">📂 데이터</div>
+    <div class="settings-csv-row">
+      <button class="btn btn-secondary" style="flex:1;font-size:13px" onclick="exportCSV()">⬇️ CSV 내보내기</button>
+      <label class="btn btn-secondary" style="flex:1;font-size:13px;text-align:center;cursor:pointer">
+        ⬆️ CSV 가져오기
+        <input type="file" accept=".csv" id="csvImportInput" style="display:none" onchange="importCSV(this)" />
+      </label>
+    </div>
+    <div style="font-size:11px;color:var(--t3);margin-top:8px">CSV 형식: 표현,뜻,예문,언어,카테고리,난이도,메모</div>
+
+    <div class="settings-section-title">🔑 API 키</div>
+    <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <div class="settings-row-label">Anthropic API Key</div>
+      <input type="password" id="apiKeyInput" class="form-control" placeholder="sk-ant-..." style="font-size:13px" />
+      <button class="btn btn-primary" style="width:100%;font-size:13px;padding:10px" onclick="saveApiKey()">저장</button>
+    </div>
+
+    <div class="settings-section-title">👤 닉네임</div>
+    <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <input type="text" id="nicknameEditInput" class="form-control" maxlength="12" style="font-size:13px" />
+      <button class="btn btn-secondary" style="width:100%;font-size:13px;padding:10px" onclick="updateNickname()">닉네임 변경</button>
+    </div>
+
+    <button class="btn btn-secondary" style="width:100%;margin-top:16px" onclick="closeSettings()">닫기</button>
   </div>
 </div>
 
@@ -632,6 +698,111 @@
   let quizAnswered = false;
   let quizMode = 'expr'; // 'expr'=표현→뜻, 'meaning'=뜻→표현
   let wrongAnswers = []; // 오답 노트
+
+  // ── Settings ──────────────────────────────────────────────
+  function openSettings() {
+    const modal = document.getElementById('settingsModal');
+    // 현재 값 채우기
+    const apiKey = localStorage.getItem('anthropic_api_key') || '';
+    document.getElementById('apiKeyInput').value = apiKey ? '••••••••' : '';
+    document.getElementById('nicknameEditInput').value = getNickname();
+    document.getElementById('notifToggle').checked = localStorage.getItem('notif_enabled') === 'true';
+    modal.classList.add('show');
+  }
+  function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('show');
+  }
+  function saveApiKey() {
+    const val = document.getElementById('apiKeyInput').value.trim();
+    if (val && !val.startsWith('•')) {
+      localStorage.setItem('anthropic_api_key', val);
+      showToast('✅ API 키 저장됨');
+    }
+    closeSettings();
+  }
+  function updateNickname() {
+    const val = document.getElementById('nicknameEditInput').value.trim();
+    if (!val) { showToast('닉네임을 입력해주세요'); return; }
+    localStorage.setItem('nickname', val);
+    showToast(`✅ 닉네임이 "${val}"로 변경됐어요`);
+    closeSettings();
+  }
+
+  // ── Notifications ─────────────────────────────────────────
+  async function toggleNotification(enabled) {
+    if (enabled) {
+      if (!('Notification' in window)) { showToast('이 브라우저는 알림을 지원하지 않아요'); return; }
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') {
+        showToast('알림 권한이 거부됐어요. 브라우저 설정에서 허용해주세요');
+        document.getElementById('notifToggle').checked = false;
+        return;
+      }
+    }
+    localStorage.setItem('notif_enabled', enabled);
+    showToast(enabled ? '🔔 알림이 켜졌어요!' : '🔕 알림이 꺼졌어요');
+  }
+  function checkAndNotify() {
+    if (localStorage.getItem('notif_enabled') !== 'true') return;
+    if (Notification.permission !== 'granted') return;
+    const lastNotif = localStorage.getItem('last_notif_date');
+    if (lastNotif === today()) return; // 오늘 이미 알림 보냄
+    const merged = expressions.map(getMerged);
+    const due = merged.filter(e => !e.완전암기 && isDue(e)).length;
+    if (due > 0) {
+      localStorage.setItem('last_notif_date', today());
+      new Notification('📚 외국어 표현 복습', {
+        body: `오늘 복습할 표현이 ${due}개 있어요! 지금 확인해보세요 🔥`,
+        icon: '/language-app/manifest.json',
+        tag: 'review-reminder'
+      });
+    }
+  }
+
+  // ── CSV Export / Import ───────────────────────────────────
+  function exportCSV() {
+    const header = '표현,뜻,예문,언어,카테고리,난이도,메모,추가날짜';
+    const rows = expressions.map(e => [
+      e.표현, e.뜻, e.예문||'', e.언어||'', e.카테고리||'', e.난이도||'', e.메모||'', e.추가날짜||''
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url;
+    a.download = `expressions_${today()}.csv`; a.click();
+    URL.revokeObjectURL(url);
+    showToast(`⬇️ ${expressions.length}개 표현 내보냈어요!`);
+    closeSettings();
+  }
+  async function importCSV(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const text = await file.text();
+    const lines = text.replace(/^﻿/, '').split('\n').filter(l => l.trim());
+    const dataLines = lines.slice(1); // 헤더 제외
+    let added = 0;
+    for (const line of dataLines) {
+      const cols = line.match(/("(?:[^"]|"")*"|[^,]*)/g)?.map(v => v.replace(/^"|"$/g,'').replace(/""/g,'"')) || [];
+      const [표현, 뜻, 예문, 언어, 카테고리, 난이도, 메모, 추가날짜] = cols;
+      if (!표현 || !뜻) continue;
+      if (expressions.some(e => e.표현 === 표현)) continue; // 중복 스킵
+      const newExpr = { id: 'csv-' + Date.now() + Math.random().toString(36).slice(2), 표현, 뜻, 예문: 예문||'', 언어: 언어||'🇨🇳 중국어', 카테고리: 카테고리||'기타', 난이도: 난이도||'⭐ 초급', 메모: 메모||'', 추가날짜: 추가날짜||today() };
+      expressions.push(newExpr);
+      progress[newExpr.id] = { 복습횟수: 0, 완전암기: false, 다음복습: today() };
+      added++;
+    }
+    if (added > 0) {
+      try {
+        await saveExpressionsToFirebase();
+        saveProgress(); updateStats(); renderList();
+        showToast(`✅ ${added}개 표현 가져왔어요!`);
+      } catch (e) { showToast('저장 실패: ' + e.message); }
+    } else {
+      showToast('추가할 새 표현이 없어요 (중복 제외)');
+    }
+    input.value = '';
+    closeSettings();
+  }
 
   // ── Voice Recording ───────────────────────────────────────
   let mediaRecorder = null;
@@ -1799,6 +1970,8 @@
       // 통계 & 랭킹
       renderStatsDashboard();
       renderLeaderboard();
+      // 알림
+      setTimeout(() => checkAndNotify(), 2000);
       // 소셜 피드 & 닉네임
       loadActivityFeed();
       setTimeout(() => checkNickname(), 800);
