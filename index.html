@@ -55,9 +55,22 @@
     .card-meaning { font-size: 21px; font-weight: 800; color: var(--t1); margin-bottom: 8px; letter-spacing: -0.4px; }
     .card-example { font-size: 12px; color: var(--t2); font-style: italic; line-height: 1.55; }
     .card-memo { font-size: 11px; color: var(--t3); margin-top: 6px; line-height: 1.4; }
-    .card-tts-row { display: flex; justify-content: center; max-width: 380px; margin: 0 auto 6px; }
+    .card-tts-row { display: flex; justify-content: center; gap: 8px; max-width: 380px; margin: 0 auto 6px; flex-wrap: wrap; }
     .card-tts-btn { background: var(--pbg); border: none; cursor: pointer; padding: 6px 16px; border-radius: 100px; transition: all 0.15s; color: var(--p); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 5px; }
     .card-tts-btn:active { transform: scale(0.94); }
+    .rec-btn { background: #fff2f2; color: #d83030; border: none; cursor: pointer; padding: 6px 16px; border-radius: 100px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
+    .rec-btn.recording { background: #d83030; color: white; animation: recPulse 1s ease-in-out infinite; }
+    [data-theme="dark"] .rec-btn { background: #2a1515; color: #ff6b6b; }
+    [data-theme="dark"] .rec-btn.recording { background: #d83030; color: white; }
+    @keyframes recPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(216,48,48,0.4); } 50% { box-shadow: 0 0 0 6px rgba(216,48,48,0); } }
+    .rec-playback { max-width: 380px; margin: 0 auto 6px; background: var(--card); border: 1.5px solid var(--border2); border-radius: var(--r); padding: 10px 14px; display: none; }
+    .rec-playback.show { display: block; }
+    .rec-playback-title { font-size: 11px; font-weight: 700; color: var(--t3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .rec-compare-row { display: flex; gap: 8px; }
+    .rec-play-btn { flex: 1; padding: 8px 10px; border: none; border-radius: var(--r); cursor: pointer; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.15s; }
+    .rec-play-native { background: var(--pbg); color: var(--p); }
+    .rec-play-mine { background: #fff2f2; color: #d83030; }
+    [data-theme="dark"] .rec-play-mine { background: #2a1515; color: #ff6b6b; }
     .progress-wrap { max-width: 380px; margin: 0 auto 6px; }
     .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--t3); margin-bottom: 6px; font-weight: 600; }
     .progress-bar { background: var(--border2); border-radius: 100px; height: 4px; overflow: hidden; }
@@ -497,6 +510,65 @@
   let quizAnswered = false;
   let quizMode = 'expr'; // 'expr'=표현→뜻, 'meaning'=뜻→표현
 
+  // ── Voice Recording ───────────────────────────────────────
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let recordedBlob = null;
+  let recordedAudio = null;
+  let isRecording = false;
+
+  async function toggleRecording(expr, lang) {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      await startRecording(expr, lang);
+    }
+  }
+
+  async function startRecording(expr, lang) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recordedChunks = [];
+      recordedBlob = null;
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        recordedBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+        recordedAudio = new Audio(URL.createObjectURL(recordedBlob));
+        stream.getTracks().forEach(t => t.stop());
+        // 비교 패널 표시
+        const panel = document.getElementById('recPlayback');
+        if (panel) panel.classList.add('show');
+        showToast('🎙️ 녹음 완료! 발음을 비교해보세요');
+      };
+      mediaRecorder.start();
+      isRecording = true;
+      const btn = document.getElementById('recBtn');
+      if (btn) { btn.textContent = '⏹️ 녹음 중지'; btn.classList.add('recording'); }
+    } catch (e) {
+      if (e.name === 'NotAllowedError') {
+        showToast('🎙️ 마이크 권한을 허용해주세요');
+      } else {
+        showToast('녹음 시작 실패: ' + e.message);
+      }
+    }
+  }
+
+  function stopRecording() {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      isRecording = false;
+      const btn = document.getElementById('recBtn');
+      if (btn) { btn.textContent = '🎙️ 다시 녹음'; btn.classList.remove('recording'); }
+    }
+  }
+
+  function playMyRecording() {
+    if (!recordedAudio) { showToast('먼저 녹음해주세요'); return; }
+    recordedAudio.currentTime = 0;
+    recordedAudio.play().catch(() => showToast('재생 실패'));
+  }
+
   // ── Nickname & Social Feed ────────────────────────────────
   function getNickname() { return localStorage.getItem('nickname') || ''; }
   function saveNickname() {
@@ -834,6 +906,14 @@
       </div>
       <div class="card-tts-row">
         <button class="card-tts-btn" onclick="speak('${exprEsc}','${langEsc}')">🔊 발음 듣기</button>
+        <button class="rec-btn" id="recBtn" onclick="toggleRecording('${exprEsc}','${langEsc}')">🎙️ 따라 말하기</button>
+      </div>
+      <div class="rec-playback" id="recPlayback">
+        <div class="rec-playback-title">🎧 발음 비교</div>
+        <div class="rec-compare-row">
+          <button class="rec-play-btn rec-play-native" onclick="speak('${exprEsc}','${langEsc}')">🔊 원어민</button>
+          <button class="rec-play-btn rec-play-mine" onclick="playMyRecording()">🎙️ 내 발음</button>
+        </div>
       </div>
       <div id="review-btns" style="display:none">
         <div class="review-btns">
@@ -857,6 +937,8 @@
     const cnt = correct ? (p.복습횟수 || 0) + 1 : 0;
     progress[expr.id] = { ...progress[expr.id], 복습횟수: cnt, 완전암기: false, 다음복습: calcNextReview(cnt, correct) };
     saveProgress();
+    stopRecording();
+    recordedBlob = null; recordedAudio = null;
     reviewIndex++;
     showCard();
   }
