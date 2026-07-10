@@ -285,6 +285,65 @@
     .activity-expr { font-size: 13px; color: var(--p); font-weight: 700; }
     .activity-time { font-size: 11px; color: var(--t3); flex-shrink: 0; }
 
+    /* ── AI Generate ── */
+    .add-mode-toggle { display: flex; background: var(--border2); border-radius: var(--r); padding: 3px; margin-bottom: 18px; }
+    .add-mode-btn { flex: 1; padding: 8px; border: none; background: none; border-radius: calc(var(--r) - 3px); font-size: 13px; font-weight: 700; color: var(--t3); cursor: pointer; transition: all 0.2s; }
+    .add-mode-btn.active { background: var(--card); color: var(--p); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .ai-gen-section { display: none; }
+    .ai-gen-section.show { display: block; }
+    .manual-section { display: block; }
+    .manual-section.hide { display: none; }
+    .ai-gen-results { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .ai-gen-item { background: var(--pbg); border-radius: var(--r); padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+    .ai-gen-item-check { width: 20px; height: 20px; accent-color: var(--p); cursor: pointer; flex-shrink: 0; }
+    .ai-gen-item-text { flex: 1; }
+    .ai-gen-item-expr { font-size: 16px; font-weight: 800; color: var(--p); }
+    .ai-gen-item-meaning { font-size: 12px; color: var(--t2); margin-top: 2px; }
+    .ai-gen-item-example { font-size: 11px; color: var(--t3); font-style: italic; margin-top: 2px; }
+    .ai-gen-save-row { display: flex; gap: 8px; margin-top: 12px; }
+
+    /* ── Edit Modal ── */
+    .edit-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9990; display: none; align-items: flex-end; justify-content: center; }
+    .edit-modal-overlay.show { display: flex; }
+    .edit-modal-box { background: var(--card); border-radius: var(--r-xl) var(--r-xl) 0 0; padding: 24px 20px calc(20px + env(safe-area-inset-bottom)); width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto; animation: slideUp 0.28s cubic-bezier(0.4,0,0.2,1); }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .edit-modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 18px; }
+    .edit-modal-title { font-size: 17px; font-weight: 800; color: var(--t1); margin-bottom: 16px; }
+
+    /* ── Stats Dashboard ── */
+    .stats-dashboard { background: var(--card); border-radius: var(--r-xl); padding: 18px 16px; margin-bottom: 12px; border: 1.5px solid var(--border); }
+    .stats-dashboard-title { font-size: 12px; font-weight: 800; color: var(--t3); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 14px; }
+    .stats-rings-row { display: flex; gap: 12px; margin-bottom: 14px; }
+    .stats-ring-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .stats-ring-label { font-size: 11px; font-weight: 700; color: var(--t3); text-align: center; }
+    .stats-ring-val { font-size: 13px; font-weight: 800; color: var(--t1); }
+    .stats-lang-row { display: flex; gap: 6px; }
+    .stats-lang-bar { flex: 1; background: var(--border2); border-radius: 100px; height: 6px; overflow: hidden; margin-top: 6px; }
+    .stats-lang-fill-cn { height: 100%; background: linear-gradient(90deg, #ff6b6b, #ffa8a8); border-radius: 100px; transition: width 0.6s; }
+    .stats-lang-fill-jp { height: 100%; background: linear-gradient(90deg, #339af0, #74c0fc); border-radius: 100px; transition: width 0.6s; }
+    .stats-lang-item { flex: 1; }
+    .stats-lang-label { font-size: 11px; color: var(--t2); font-weight: 600; display: flex; justify-content: space-between; }
+    .streak-cal { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-top: 4px; }
+    .streak-dot { width: 100%; aspect-ratio: 1; border-radius: 3px; background: var(--border2); }
+    .streak-dot.active { background: var(--p); }
+    .streak-dot.today { background: var(--p2); box-shadow: 0 0 0 2px var(--p); }
+
+    /* ── Leaderboard ── */
+    .leaderboard { background: var(--card); border-radius: var(--r-xl); padding: 16px; margin-bottom: 12px; border: 1.5px solid var(--border); }
+    .leaderboard-title { font-size: 12px; font-weight: 800; color: var(--t3); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 12px; }
+    .lb-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border2); }
+    .lb-item:last-child { border-bottom: none; }
+    .lb-rank { font-size: 16px; width: 28px; text-align: center; flex-shrink: 0; }
+    .lb-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--p), var(--p2)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: white; flex-shrink: 0; }
+    .lb-name { flex: 1; font-size: 14px; font-weight: 700; color: var(--t1); }
+    .lb-count { font-size: 13px; font-weight: 800; color: var(--p); }
+    .lb-me { background: var(--pbg); border-radius: var(--r); margin: 0 -4px; padding: 8px 4px; }
+
+    /* ── Wrong answers ── */
+    .wrong-note-btn { background: #fff2f2; color: #d83030; border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--r); font-weight: 700; font-size: 13px; margin-top: 8px; width: 100%; display: none; transition: all 0.15s; }
+    .wrong-note-btn.show { display: block; }
+    [data-theme="dark"] .wrong-note-btn { background: #2a1515; color: #ff6b6b; }
+
     /* ── Practice mode ── */
     .practice-banner { padding: 8px 14px; background: linear-gradient(135deg, #0e2a18, #1a4a2e); border-bottom: 1px solid #2d6b42; display: none; align-items: center; gap: 8px; flex-shrink: 0; }
     .practice-banner.active { display: flex; }
@@ -306,6 +365,37 @@
     <div class="streak-badge cold" id="streakBadge" onclick="showStreakPopup()" title="연속 학습일">🔥 0일</div>
     <button class="icon-btn" onclick="refreshData()" id="refreshBtn" title="새로고침">↻</button>
     <button class="icon-btn" onclick="toggleDark()" id="darkBtn" title="다크모드">🌙</button>
+  </div>
+</div>
+
+<!-- Edit modal -->
+<div class="edit-modal-overlay" id="editModal">
+  <div class="edit-modal-box">
+    <div class="edit-modal-handle"></div>
+    <div class="edit-modal-title">✏️ 표현 편집</div>
+    <input type="hidden" id="edit-id" />
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">표현 *</label>
+        <input type="text" id="edit-expr" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">뜻 *</label>
+        <input type="text" id="edit-meaning" class="form-control" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">예문</label>
+      <textarea id="edit-example" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">메모</label>
+      <textarea id="edit-memo" class="form-control"></textarea>
+    </div>
+    <div class="form-row">
+      <button class="btn btn-secondary" onclick="closeEditModal()">취소</button>
+      <button class="btn btn-primary" onclick="saveEdit()">저장 💾</button>
+    </div>
   </div>
 </div>
 
@@ -332,6 +422,8 @@
 
 <!-- 복습 탭 -->
 <div id="tab-review" class="section active">
+  <div class="stats-dashboard" id="statsDashboard"></div>
+  <div class="leaderboard" id="leaderboardEl" style="display:none"></div>
   <div id="review-content">
     <div class="loading-wrap"><div class="spinner"></div><p>불러오는 중...</p></div>
   </div>
@@ -353,7 +445,30 @@
 <!-- 추가 탭 -->
 <div id="tab-add" class="section">
   <div class="section-title">새 표현 추가</div>
-  <div class="section-sub">모임에서 배운 표현을 기록하세요</div>
+  <div class="add-mode-toggle">
+    <button class="add-mode-btn active" id="modeManualBtn" onclick="setAddMode('manual')">✏️ 직접 입력</button>
+    <button class="add-mode-btn" id="modeAiBtn" onclick="setAddMode('ai')">✨ AI 자동 생성</button>
+  </div>
+
+  <!-- AI 생성 섹션 -->
+  <div class="ai-gen-section" id="aiGenSection">
+    <div class="form-group">
+      <label class="form-label">언어</label>
+      <select id="ai-lang" class="form-control">
+        <option value="🇨🇳 중국어">🇨🇳 중국어</option>
+        <option value="🇯🇵 일본어">🇯🇵 일본어</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">어떤 주제의 표현을 원하나요?</label>
+      <input type="text" id="ai-topic" class="form-control" placeholder="예: 카페에서 주문할 때, 감사 표현, 날씨 이야기..." />
+    </div>
+    <button class="btn btn-primary btn-full" onclick="generateWithAI()" id="aiGenBtn">✨ AI로 표현 생성하기</button>
+    <div id="aiGenResults" class="ai-gen-results"></div>
+  </div>
+
+  <!-- 직접 입력 섹션 -->
+  <div class="manual-section" id="manualSection">
   <div class="form-group">
     <label class="form-label">언어 *</label>
     <select id="add-lang" class="form-control">
@@ -398,6 +513,7 @@
   </div>
   <button class="btn btn-primary btn-full" onclick="addExpression()">저장 💾</button>
   <div id="add-status"></div>
+  </div><!-- end manual-section -->
 </div>
 
 <!-- 목록 탭 -->
@@ -515,6 +631,7 @@
   let quizScore = 0;
   let quizAnswered = false;
   let quizMode = 'expr'; // 'expr'=표현→뜻, 'meaning'=뜻→표현
+  let wrongAnswers = []; // 오답 노트
 
   // ── Voice Recording ───────────────────────────────────────
   let mediaRecorder = null;
@@ -1017,7 +1134,7 @@
     if (quizAnswered) return;
     quizAnswered = true;
     const isCorrect = selectedId === correctId;
-    if (isCorrect) quizScore++;
+    if (isCorrect) { quizScore++; } else { wrongAnswers.push(quizQueue[quizIndex]); }
 
     // Highlight all choices
     document.querySelectorAll('.quiz-choice').forEach(b => {
@@ -1037,6 +1154,7 @@
     let emoji = pct >= 80 ? '🏆' : pct >= 60 ? '😊' : '💪';
     let msg = pct >= 80 ? '훌륭해요!' : pct >= 60 ? '잘 했어요!' : '더 연습해봐요!';
     if (pct === 100) launchConfetti();
+    const wrongCount = wrongAnswers.length;
     document.getElementById('quiz-content').innerHTML = `
       <div class="quiz-result">
         <div style="font-size:64px;margin-bottom:12px">${emoji}</div>
@@ -1046,7 +1164,236 @@
           <button class="btn btn-primary" onclick="startQuiz()">🔄 다시 하기</button>
           <button class="btn btn-secondary" onclick="switchTab('review', document.querySelectorAll('.nav-btn')[0])">📚 복습 하기</button>
         </div>
+        ${wrongCount > 0 ? `<button class="wrong-note-btn show" onclick="retryWrongAnswers()">❌ 오답 ${wrongCount}개 다시 도전</button>` : ''}
+        ${wrongCount > 0 ? `<div style="margin-top:14px;text-align:left"><div style="font-size:12px;font-weight:800;color:var(--t3);margin-bottom:8px">오답 목록</div>${wrongAnswers.map(e=>`<div style="padding:8px 0;border-bottom:1px solid var(--border2);font-size:14px"><span style="font-weight:800;color:var(--p)">${e.표현}</span> <span style="color:var(--t3)">→</span> ${e.뜻}</div>`).join('')}</div>` : ''}
       </div>`;
+  }
+  function retryWrongAnswers() {
+    quizQueue = [...wrongAnswers];
+    wrongAnswers = [];
+    quizIndex = 0;
+    quizScore = 0;
+    quizAnswered = false;
+    showQuizQuestion();
+  }
+
+  // ── Add Mode Toggle ───────────────────────────────────────
+  function setAddMode(mode) {
+    document.getElementById('aiGenSection').classList.toggle('show', mode === 'ai');
+    document.getElementById('manualSection').classList.toggle('hide', mode === 'ai');
+    document.getElementById('modeManualBtn').classList.toggle('active', mode === 'manual');
+    document.getElementById('modeAiBtn').classList.toggle('active', mode === 'ai');
+  }
+
+  // ── AI Generate ───────────────────────────────────────────
+  async function generateWithAI() {
+    const apiKey = localStorage.getItem('anthropic_api_key');
+    if (!apiKey) { showToast('⚙️ 먼저 API 키를 설정해주세요'); return; }
+    const topic = document.getElementById('ai-topic').value.trim();
+    const lang = document.getElementById('ai-lang').value;
+    if (!topic) { showToast('주제를 입력해주세요'); return; }
+    const btn = document.getElementById('aiGenBtn');
+    btn.textContent = '✨ 생성 중...'; btn.disabled = true;
+    document.getElementById('aiGenResults').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p>AI가 표현을 생성하고 있어요...</p></div>';
+
+    const langName = lang.includes('중국어') ? '중국어(보통화)' : '일본어';
+    const prompt = `${langName}로 "${topic}" 주제의 표현 5개를 만들어줘.
+각 표현은 반드시 이 형식으로:
+[EXPR]표현|한국어뜻|예문(${langName})|메모(뉘앙스/사용상황)|난이도(⭐초급/⭐⭐중급/⭐⭐⭐고급)|${lang}[/EXPR]
+
+예시: [EXPR]ありがとう|감사합니다|ありがとう、助かりました。|일상적 감사 표현|⭐ 초급|🇯🇵 일본어[/EXPR]
+
+정확히 5개만, 다른 설명 없이`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
+      });
+      const data = await res.json();
+      const text = data.content?.[0]?.text || '';
+      const matches = [...text.matchAll(/\[EXPR\](.*?)\[\/EXPR\]/gs)];
+      if (!matches.length) { showToast('생성 실패. 다시 시도해주세요'); return; }
+
+      const items = matches.map(m => {
+        const [표현, 뜻, 예문, 메모, 난이도, 언어] = m[1].split('|').map(s => s.trim());
+        return { 표현, 뜻, 예문, 메모, 난이도, 언어: 언어 || lang, checked: true };
+      });
+
+      document.getElementById('aiGenResults').innerHTML = `
+        <div style="font-size:13px;font-weight:700;color:var(--t2);margin-bottom:8px">저장할 표현 선택:</div>
+        ${items.map((item, i) => `
+          <div class="ai-gen-item">
+            <input type="checkbox" class="ai-gen-item-check" id="aicheck${i}" checked />
+            <div class="ai-gen-item-text">
+              <div class="ai-gen-item-expr">${item.표현}</div>
+              <div class="ai-gen-item-meaning">${item.뜻} · ${item.난이도 || ''}</div>
+              ${item.예문 ? `<div class="ai-gen-item-example">${item.예문}</div>` : ''}
+            </div>
+            <button onclick="speak('${item.표현.replace(/'/g,"\\'")}','${lang.replace(/'/g,"\\'")}');event.stopPropagation()" style="background:none;border:none;font-size:18px;cursor:pointer">🔊</button>
+          </div>`).join('')}
+        <div class="ai-gen-save-row">
+          <button class="btn btn-secondary" onclick="document.getElementById('aiGenResults').innerHTML='';document.getElementById('ai-topic').value=''">↩️ 초기화</button>
+          <button class="btn btn-primary" onclick="saveAIGenerated(${JSON.stringify(items).replace(/"/g,'&quot;')})">💾 선택 저장</button>
+        </div>`;
+    } catch (e) {
+      showToast('오류: ' + e.message);
+    } finally {
+      btn.textContent = '✨ AI로 표현 생성하기'; btn.disabled = false;
+    }
+  }
+
+  async function saveAIGenerated(items) {
+    const checkboxes = document.querySelectorAll('.ai-gen-item-check');
+    const selected = items.filter((_, i) => checkboxes[i]?.checked);
+    if (!selected.length) { showToast('저장할 표현을 선택해주세요'); return; }
+    for (const item of selected) {
+      const newExpr = { id: 'u-' + Date.now() + Math.random().toString(36).slice(2), ...item, 카테고리: '기타', 추가날짜: today() };
+      delete newExpr.checked;
+      expressions.push(newExpr);
+      progress[newExpr.id] = { 복습횟수: 0, 완전암기: false, 다음복습: today() };
+      logActivity(newExpr.표현, newExpr.뜻, newExpr.언어);
+      await new Promise(r => setTimeout(r, 50));
+    }
+    try {
+      await saveExpressionsToFirebase();
+      saveProgress();
+      updateStats();
+      showToast(`✅ ${selected.length}개 표현 저장 완료!`);
+      document.getElementById('aiGenResults').innerHTML = '';
+      document.getElementById('ai-topic').value = '';
+    } catch (e) { showToast('저장 실패: ' + e.message); }
+  }
+
+  // ── Edit Expression ───────────────────────────────────────
+  function openEditModal(id) {
+    const e = expressions.find(x => x.id === id);
+    if (!e) return;
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-expr').value = e.표현 || '';
+    document.getElementById('edit-meaning').value = e.뜻 || '';
+    document.getElementById('edit-example').value = e.예문 || '';
+    document.getElementById('edit-memo').value = e.메모 || '';
+    document.getElementById('editModal').classList.add('show');
+  }
+  function closeEditModal() {
+    document.getElementById('editModal').classList.remove('show');
+  }
+  async function saveEdit() {
+    const id = document.getElementById('edit-id').value;
+    const idx = expressions.findIndex(x => x.id === id);
+    if (idx < 0) return;
+    expressions[idx] = {
+      ...expressions[idx],
+      표현: document.getElementById('edit-expr').value.trim(),
+      뜻: document.getElementById('edit-meaning').value.trim(),
+      예문: document.getElementById('edit-example').value.trim(),
+      메모: document.getElementById('edit-memo').value.trim(),
+    };
+    try {
+      await saveExpressionsToFirebase();
+      saveProgress(); renderList(); updateStats();
+      closeEditModal();
+      showToast('✅ 수정됐어요!');
+    } catch (e) { showToast('수정 실패: ' + e.message); }
+  }
+
+  // ── Stats Dashboard ───────────────────────────────────────
+  function renderStatsDashboard() {
+    const merged = expressions.map(getMerged);
+    const total = merged.length;
+    const mastered = merged.filter(e => e.완전암기).length;
+    const cn = merged.filter(e => e.언어?.includes('중국어')).length;
+    const jp = merged.filter(e => e.언어?.includes('일본어')).length;
+    const mastPct = total ? Math.round(mastered / total * 100) : 0;
+    const s = getStreak();
+
+    // 스트릭 캘린더 (지난 21일)
+    const calDots = Array.from({ length: 21 }, (_, i) => {
+      const d = new Date(); d.setDate(d.getDate() - (20 - i));
+      const ds = d.toISOString().slice(0, 10);
+      const isToday = ds === today();
+      // localStorage에 날짜별 기록이 없으므로 스트릭 기반 추정
+      const daysAgo = 20 - i;
+      const active = daysAgo < s.count;
+      return `<div class="streak-dot ${isToday ? 'today' : active ? 'active' : ''}"></div>`;
+    }).join('');
+
+    const el = document.getElementById('statsDashboard');
+    if (!el) return;
+    el.innerHTML = `
+      <div class="stats-dashboard-title">📊 나의 학습 현황</div>
+      <div class="stats-rings-row">
+        <div class="stats-ring-wrap">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="var(--border2)" stroke-width="6"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="var(--p)" stroke-width="6"
+              stroke-dasharray="${2*Math.PI*26}" stroke-dashoffset="${2*Math.PI*26*(1-mastPct/100)}"
+              stroke-linecap="round" transform="rotate(-90 32 32)" style="transition:stroke-dashoffset 0.8s"/>
+            <text x="32" y="37" text-anchor="middle" fill="var(--t1)" font-size="14" font-weight="800">${mastPct}%</text>
+          </svg>
+          <div class="stats-ring-label">암기 완료</div>
+          <div class="stats-ring-val">${mastered}/${total}</div>
+        </div>
+        <div class="stats-ring-wrap">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="var(--border2)" stroke-width="6"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#ffd43b" stroke-width="6"
+              stroke-dasharray="${2*Math.PI*26}" stroke-dashoffset="${2*Math.PI*26*(1-Math.min(s.count,30)/30)}"
+              stroke-linecap="round" transform="rotate(-90 32 32)" style="transition:stroke-dashoffset 0.8s"/>
+            <text x="32" y="37" text-anchor="middle" fill="var(--t1)" font-size="14" font-weight="800">${s.count}</text>
+          </svg>
+          <div class="stats-ring-label">🔥 스트릭</div>
+          <div class="stats-ring-val">최장 ${s.longest}일</div>
+        </div>
+        <div class="stats-ring-wrap" style="justify-content:flex-start;padding-top:4px">
+          <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:6px">언어 분포</div>
+          <div class="stats-lang-item" style="margin-bottom:8px">
+            <div class="stats-lang-label"><span>🇨🇳 중국어</span><span>${cn}개</span></div>
+            <div class="stats-lang-bar"><div class="stats-lang-fill-cn" style="width:${total?cn/total*100:0}%"></div></div>
+          </div>
+          <div class="stats-lang-item">
+            <div class="stats-lang-label"><span>🇯🇵 일본어</span><span>${jp}개</span></div>
+            <div class="stats-lang-bar"><div class="stats-lang-fill-jp" style="width:${total?jp/total*100:0}%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:6px">📅 최근 21일 학습</div>
+      <div class="streak-cal">${calDots}</div>`;
+  }
+
+  // ── Leaderboard ───────────────────────────────────────────
+  async function renderLeaderboard() {
+    const el = document.getElementById('leaderboardEl');
+    if (!el) return;
+    try {
+      const weekAgo = Date.now() - 7 * 24 * 3600 * 1000;
+      const r = await fetch(`${FIREBASE_URL}/activity.json?orderBy="ts"&startAt=${weekAgo}`);
+      if (!r.ok) return;
+      const data = await r.json();
+      if (!data) { el.style.display = 'none'; return; }
+      const counts = {};
+      Object.values(data).forEach(item => {
+        if (item.ts >= weekAgo && item.nickname) {
+          counts[item.nickname] = (counts[item.nickname] || 0) + 1;
+        }
+      });
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      if (!sorted.length) { el.style.display = 'none'; return; }
+      const myNick = getNickname();
+      const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+      el.innerHTML = `
+        <div class="leaderboard-title">🏆 이번 주 랭킹</div>
+        ${sorted.map(([nick, cnt], i) => `
+          <div class="lb-item ${nick === myNick ? 'lb-me' : ''}">
+            <div class="lb-rank">${medals[i]}</div>
+            <div class="lb-avatar">${nick[0]?.toUpperCase()}</div>
+            <div class="lb-name">${nick}${nick === myNick ? ' (나)' : ''}</div>
+            <div class="lb-count">${cnt}개 추가</div>
+          </div>`).join('')}`;
+      el.style.display = 'block';
+    } catch { el.style.display = 'none'; }
   }
 
   // ── Add ───────────────────────────────────────────────────
@@ -1138,6 +1485,7 @@
             <button class="expr-action-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${e.id}')">⭐</button>
             <button class="expr-action-btn" onclick="speak('${exprEsc}','${langEsc}')">🔊</button>
             <button class="expr-action-btn" onclick="shareExpression('${exprEsc}','${meaningEsc}','${langEsc}')">📤</button>
+            <button class="expr-action-btn" onclick="openEditModal('${e.id}')">✏️</button>
             <button class="expr-action-btn" onclick="deleteExpression('${e.id}')" style="color:#ffb3b3">🗑️</button>
           </div>
         </div>
@@ -1448,6 +1796,9 @@
       if (s.count >= 2 && prevStreak.lastDate !== today()) {
         setTimeout(() => showStreakPopup(), 1200);
       }
+      // 통계 & 랭킹
+      renderStatsDashboard();
+      renderLeaderboard();
       // 소셜 피드 & 닉네임
       loadActivityFeed();
       setTimeout(() => checkNickname(), 800);
