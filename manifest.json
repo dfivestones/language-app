@@ -1,0 +1,41 @@
+{
+  "name": "외국어 표현 복습",
+  "short_name": "언어복습",
+  "description": "중국어·일본어 표현을 함께 복습하는 앱",
+  "start_url": "/language-app/",
+  "scope": "/language-app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f5fb",
+  "theme_color": "#6c63ff",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%236c63ff'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E📚%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%236c63ff'/%3E%3Ctext x='256' y='340' font-size='260' text-anchor='middle'%3E📚%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "오늘 복습",
+      "short_name": "복습",
+      "url": "/language-app/?tab=review",
+      "description": "오늘 복습할 표현 보기"
+    },
+    {
+      "name": "퀴즈 시작",
+      "short_name": "퀴즈",
+      "url": "/language-app/?tab=quiz",
+      "description": "퀴즈 모드 시작"
+    }
+  ]
+}
