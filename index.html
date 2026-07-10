@@ -417,9 +417,14 @@
     </div>
     <div style="font-size:11px;color:var(--t3);margin-top:8px">CSV 형식: 표현,뜻,예문,언어,카테고리,난이도,메모</div>
 
-    <div class="settings-section-title">🔑 API 키</div>
+    <div class="settings-section-title">🔑 AI 설정</div>
     <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px">
-      <div class="settings-row-label">Anthropic API Key</div>
+      <div class="settings-row-label">프록시 서버 URL <span style="font-size:10px;color:var(--p);font-weight:700">추천</span></div>
+      <div class="settings-row-sub" style="font-size:11px;color:var(--t3)">Vercel 배포 후 여기에 입력하면 API 키 없이 AI 사용 가능</div>
+      <input type="text" id="proxyUrlInput" class="form-control" placeholder="https://your-app.vercel.app" style="font-size:13px" />
+    </div>
+    <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <div class="settings-row-label">개인 Anthropic API Key <span style="font-size:10px;color:var(--t3)">선택</span></div>
       <input type="password" id="apiKeyInput" class="form-control" placeholder="sk-ant-..." style="font-size:13px" />
       <button class="btn btn-primary" style="width:100%;font-size:13px;padding:10px" onclick="saveApiKey()">저장</button>
     </div>
@@ -681,6 +686,8 @@
 
 <script>
   const FIREBASE_URL = 'https://languagestudy-7a491-default-rtdb.asia-southeast1.firebasedatabase.app';
+  // AI 프록시 URL — Vercel 배포 후 실제 URL로 교체
+  const AI_PROXY_URL = localStorage.getItem('ai_proxy_url') || '';
 
   const SEED_DATA = [{"id":"3891443c-87b4-81fc-ba81-f81dfe34506d","표현":"お疲れ様です","언어":"🇯🇵 일본어","뜻":"수고하셨습니다 / 고생하셨습니다","예문":"今日もお疲れ様です！(오늘도 수고하셨습니다!)","카테고리":["인사","비즈니스"],"난이도":"⭐ 초급","메모":"직장에서 자주 쓰는 인사말. 퇴근할 때, 이메일 끝에도 사용","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8126-bb98-d56ee9681612","표현":"随便 (suíbiàn)","언어":"🇨🇳 중국어","뜻":"마음대로 / 아무거나 / 상관없어","예문":"你想吃什么？随便。(뭐 먹고 싶어? 아무거나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"매우 자주 쓰이는 표현. 부정적 뉘앙스로도 쓰일 수 있으니 주의","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8116-9601-d934717634ac","표현":"なるほど","언어":"🇯🇵 일본어","뜻":"그렇구나 / 아하 / 과연","예문":"なるほど、そういうことか。(그렇구나, 그런 거였구나.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"상대방 말에 공감하거나 이해할 때 씀","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-818f-98a2-d22db74c3aed","표현":"探店 (tàn diàn)","언어":"🇨🇳 중국어","뜻":"맛집·카페를 직접 방문해 리뷰하다","예문":"周末一起去探店吧。(주말에 같이 맛집 탐방 가자.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"SNS 유행어","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81d2-beff-c6e57949d9d9","표현":"摊位 (tān wèi)","언어":"🇨🇳 중국어","뜻":"노점, 부스, 매대","예문":"夜市有很多摊位。(야시장에 노점이 많다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"노점 표현 중 가장 일반적","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8125-a719-ff23ebc20600","표현":"档口 (dàng kǒu)","언어":"🇨🇳 중국어","뜻":"시장·푸드코트 안의 작은 매장","예문":"这个档口卖海鲜。(이 매장은 해산물을 판다.)","카테고리":["음식"],"난이도":"⭐⭐ 중급","메모":"广东 방언에서 온 표현","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c8-b273-f7545a77734f","표현":"摊点 (tāndiǎn)","언어":"🇨🇳 중국어","뜻":"노점, 가판대","예문":"这里有很多摊点。(여기 노점이 많아.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"摊位보다 덜 쓰이지만 같은 의미","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811d-8a5b-f85740d54f06","표현":"店铺 (diànpù)","언어":"🇨🇳 중국어","뜻":"가게, 상점","예문":"他开了一家店铺。(그는 가게를 하나 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"商店보다 구어적","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8167-a5b3-c511c819bff8","표현":"小店 (xiǎodiàn)","언어":"🇨🇳 중국어","뜻":"작은 가게, 소규모 점포","예문":"我开了一家小店。(나는 작은 가게를 열었다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"친근하고 소박한 뉘앙스","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c1-be4b-f2823a80cf66","표현":"教导 (jiàodǎo)","언어":"🇨🇳 중국어","뜻":"가르치다, 지도하다","예문":"老师耐心地教导学生。(선생님이 학생들을 인내심 있게 가르친다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"단순 teach보다 인격적 지도 뉘앙스","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811a-822d-f52be3c56a3c","표현":"家教 (jiājiào)","언어":"🇨🇳 중국어","뜻":"개인 과외 선생님 / 가정교육","예문":"我请了一个家教帮孩子补课。(아이 보충수업을 위해 과외 선생님을 구했다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"맥락에 따라 두 가지 뜻","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-8cc7-e20cef7e4c9a","표현":"辅导老师 (fǔdǎo lǎoshī)","언어":"🇨🇳 중국어","뜻":"튜터, 지도교사","예문":"辅导老师每周来两次。(지도교사가 일주일에 두 번 온다.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"家教보다 공식적인 느낌","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81e8-b95a-e5be8e9e406c","표현":"轮班工作 (lúnbān gōngzuò)","언어":"🇨🇳 중국어","뜻":"교대근무를 하다","예문":"我在轮班工作。(저는 교대근무를 하고 있습니다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"파일럿·간호사 등 직업 얘기할 때","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8164-9fe9-fcc248a4d0b4","표현":"地勤 (dìqín)","언어":"🇨🇳 중국어","뜻":"지상직, 공항 지상근무 직원","예문":"她是机场的地勤人员。(그녀는 공항 지상직 직원이다.)","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"飞行员(파일럿)과 대비되는 개념","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812a-b6d2-efdc20efcd81","표현":"通勤 (tōngqín)","언어":"🇨🇳 중국어","뜻":"통근하다","예문":"我每天坐地铁通勤。(저는 매일 지하철로 통근합니다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"通勤时间 = 출퇴근 시간","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-811e-bdab-d229a99a809c","표현":"禽兽 (qínshòu)","언어":"🇨🇳 중국어","뜻":"금수, 짐승 (욕설)","예문":"他真是个禽兽！(그는 정말 짐승 같은 놈이야!)","카테고리":["감정"],"난이도":"⭐⭐ 중급","메모":"원래 뜻은 날짐승과 들짐승이지만 욕설로 많이 씀","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8114-b84c-feea893e6f41","표현":"禽兽不如 (qínshòu bùrú)","언어":"🇨🇳 중국어","뜻":"금수만도 못하다","예문":"你简直禽兽不如！","카테고리":["감정"],"난이도":"⭐⭐⭐ 고급","메모":"강한 비난 표현","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8146-8da5-e7ab97519aa9","표현":"兼职 (jiānzhí)","언어":"🇨🇳 중국어","뜻":"아르바이트, 부업, 겸직하다","예문":"我周末做兼职。(저는 주말에 부업을 합니다.)","카테고리":["비즈니스"],"난이도":"⭐ 초급","메모":"打工보다 정식 느낌","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8100-a34a-d2009f3922f8","표현":"盈亏 (yíngkuī)","언어":"🇨🇳 중국어","뜻":"손익 (이익과 손실)","예문":"今年公司的盈亏情况怎么样？","카테고리":["비즈니스"],"난이도":"⭐⭐ 중급","메모":"盈=이익, 亏=손실","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81bf-93ff-caab695cf991","표현":"赚钱 (zhuànqián)","언어":"🇨🇳 중국어","뜻":"돈을 벌다","예문":"他靠投资赚钱。(그는 투자로 돈을 번다.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赔钱과 반대 쌍으로 외우기","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-812b-a636-f522ae2d652d","표현":"赔钱 (péiqián)","언어":"🇨🇳 중국어","뜻":"돈을 잃다, 손해보다","예문":"这次投资赔钱了。(이번 투자에서 손해 봤어.)","카테고리":["일상"],"난이도":"⭐ 초급","메모":"赚钱의 반대","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81cf-8d3f-ca93d9dace18","표현":"年年有余 (niánnián yǒuyú)","언어":"🇨🇳 중국어","뜻":"해마다 풍족하다 (새해 덕담)","예문":"祝你年年有余！","카테고리":["인사"],"난이도":"⭐⭐ 중급","메모":"중국 신년 대표 덕담","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-8169-809a-e687683dddc0","표현":"被坑 (bèi kēng)","언어":"🇨🇳 중국어","뜻":"당하다, 사기당하다","예문":"我被坑了！(나 당했어!)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"坑=구덩이. 구어체에서 매우 자주 씀","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81c9-9f97-cb4307c28b7a","표현":"调侃 (tiáokǎn)","언어":"🇨🇳 중국어","뜻":"놀리다, 농담하다","예문":"别调侃我了。(그만 놀려.)","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"악의 없는 장난/놀림","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-815d-ab54-f7ea8e2dc8c9","표현":"避开 (bìkāi)","언어":"🇨🇳 중국어","뜻":"피하다, 비켜가다","예문":"避开高峰期出行更轻松。","카테고리":["일상"],"난이도":"⭐ 초급","메모":"回避보다 물리적으로 피하는 느낌","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-819a-b41e-c56402e9a2bc","표현":"高峰期 (gāofēngqī)","언어":"🇨🇳 중국어","뜻":"성수기, 피크타임, 러시아워","예문":"避开高峰期出行。","카테고리":["일상"],"난이도":"⭐⭐ 중급","메모":"淡季의 반대","추가날짜":"2026-06-24"},{"id":"3891443c-87b4-81b6-825a-cc2daaa04e6b","표현":"淡季 (dànjì)","언어":"🇨🇳 중국어","뜻":"비수기","예문":"淡季旅游更便宜。","카테고리":["여행"],"난이도":"⭐⭐ 중급","메모":"高峰期/旺季의 반대","추가날짜":"2026-06-24"}];
 
@@ -702,9 +709,10 @@
   // ── Settings ──────────────────────────────────────────────
   function openSettings() {
     const modal = document.getElementById('settingsModal');
-    // 현재 값 채우기
     const apiKey = localStorage.getItem('anthropic_api_key') || '';
+    const proxyUrl = localStorage.getItem('ai_proxy_url') || '';
     document.getElementById('apiKeyInput').value = apiKey ? '••••••••' : '';
+    document.getElementById('proxyUrlInput').value = proxyUrl;
     document.getElementById('nicknameEditInput').value = getNickname();
     document.getElementById('notifToggle').checked = localStorage.getItem('notif_enabled') === 'true';
     modal.classList.add('show');
@@ -713,9 +721,14 @@
     document.getElementById('settingsModal').classList.remove('show');
   }
   function saveApiKey() {
-    const val = document.getElementById('apiKeyInput').value.trim();
-    if (val && !val.startsWith('•')) {
-      localStorage.setItem('anthropic_api_key', val);
+    const keyVal = document.getElementById('apiKeyInput').value.trim();
+    const proxyVal = document.getElementById('proxyUrlInput').value.trim();
+    if (proxyVal) {
+      localStorage.setItem('ai_proxy_url', proxyVal.replace(/\/$/, ''));
+      showToast('✅ 프록시 URL 저장됨');
+    }
+    if (keyVal && !keyVal.startsWith('•')) {
+      localStorage.setItem('anthropic_api_key', keyVal);
       showToast('✅ API 키 저장됨');
     }
     closeSettings();
@@ -1348,6 +1361,34 @@
     showQuizQuestion();
   }
 
+  // ── AI API Helper (프록시 우선, 개인 키 fallback) ────────
+  async function callAI(body) {
+    const proxyUrl = localStorage.getItem('ai_proxy_url') || '';
+    const personalKey = localStorage.getItem('anthropic_api_key') || '';
+
+    if (proxyUrl) {
+      // 프록시 서버 사용 (API 키 불필요)
+      const res = await fetch(`${proxyUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error || `오류 ${res.status}`); }
+      return res.json();
+    } else if (personalKey) {
+      // 개인 API 키 직접 사용
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': personalKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API 오류 ${res.status}`); }
+      return res.json();
+    } else {
+      throw new Error('NO_KEY');
+    }
+  }
+
   // ── Add Mode Toggle ───────────────────────────────────────
   function setAddMode(mode) {
     document.getElementById('aiGenSection').classList.toggle('show', mode === 'ai');
@@ -1358,8 +1399,6 @@
 
   // ── AI Generate ───────────────────────────────────────────
   async function generateWithAI() {
-    const apiKey = localStorage.getItem('anthropic_api_key');
-    if (!apiKey) { showToast('⚙️ 먼저 API 키를 설정해주세요'); return; }
     const topic = document.getElementById('ai-topic').value.trim();
     const lang = document.getElementById('ai-lang').value;
     if (!topic) { showToast('주제를 입력해주세요'); return; }
@@ -1377,12 +1416,7 @@
 정확히 5개만, 다른 설명 없이`;
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] })
-      });
-      const data = await res.json();
+      const data = await callAI({ model: 'claude-haiku-4-5-20251001', max_tokens: 1200, messages: [{ role: 'user', content: prompt }] });
       const text = data.content?.[0]?.text || '';
       const matches = [...text.matchAll(/\[EXPR\](.*?)\[\/EXPR\]/gs)];
       if (!matches.length) { showToast('생성 실패. 다시 시도해주세요'); return; }
@@ -1409,7 +1443,11 @@
           <button class="btn btn-primary" onclick="saveAIGenerated(${JSON.stringify(items).replace(/"/g,'&quot;')})">💾 선택 저장</button>
         </div>`;
     } catch (e) {
-      showToast('오류: ' + e.message);
+      if (e.message === 'NO_KEY') {
+        showToast('⚙️ 설정에서 API 키를 입력하거나 프록시 URL을 설정해주세요');
+      } else {
+        showToast('오류: ' + e.message);
+      }
     } finally {
       btn.textContent = '✨ AI로 표현 생성하기'; btn.disabled = false;
     }
@@ -1914,8 +1952,8 @@
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text && !pendingImage) return;
-    const apiKey = localStorage.getItem('anthropic_api_key');
-    if (!apiKey) { showToast('API 키가 없습니다'); return; }
+    const hasAI = localStorage.getItem('ai_proxy_url') || localStorage.getItem('anthropic_api_key');
+    if (!hasAI) { showToast('⚙️ 설정에서 API 키를 입력해주세요'); return; }
     input.value = ''; input.style.height = 'auto';
     const imgSnap = pendingImage;
     let userContent = imgSnap ? [
@@ -1933,14 +1971,8 @@
     thinking.innerHTML = '<div class="thinking-dots"><span></span><span></span><span></span></div>';
     container.appendChild(thinking); container.scrollTop = container.scrollHeight;
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-        body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:2048, system: conversationPracticeMode ? getPracticeSystemPrompt() : CHAT_SYSTEM_PROMPT + getVocabContext(), messages: chatHistory.map(m=>({role:m.role,content:m.content})) })
-      });
+      const data = await callAI({ model:'claude-haiku-4-5-20251001', max_tokens:2048, system: conversationPracticeMode ? getPracticeSystemPrompt() : CHAT_SYSTEM_PROMPT + getVocabContext(), messages: chatHistory.map(m=>({role:m.role,content:m.content})) });
       if (thinking.parentNode) thinking.parentNode.removeChild(thinking);
-      if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||`API 오류 ${res.status}`); }
-      const data = await res.json();
       const reply = data.content?.[0]?.text||'';
       chatHistory.push({ role:'assistant', content:reply });
       const msgId = 'msg-'+Date.now();
