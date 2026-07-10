@@ -235,6 +235,25 @@
     .paste-bar-btn.fill { background: var(--p); color: white; border: none; }
     .paste-bar-btn.outline { background: var(--card); color: var(--p); border: 1.5px solid var(--p); }
 
+    /* ── Streak ── */
+    .streak-badge { display: flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #ff922b, #fd7014); color: white; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 800; cursor: pointer; transition: transform 0.15s; }
+    .streak-badge:active { transform: scale(0.94); }
+    .streak-badge.cold { background: var(--border2); color: var(--t3); }
+    .streak-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.8); background: var(--card); border-radius: var(--r-xl); padding: 30px 28px; text-align: center; z-index: 9998; box-shadow: 0 24px 60px rgba(0,0,0,0.22); min-width: 260px; opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
+    .streak-popup.show { opacity: 1; transform: translate(-50%,-50%) scale(1); pointer-events: auto; }
+    .streak-popup-fire { font-size: 64px; margin-bottom: 10px; }
+    .streak-popup-count { font-size: 52px; font-weight: 800; background: linear-gradient(135deg, #ff922b, #fd7014); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+    .streak-popup-label { font-size: 16px; font-weight: 800; margin: 6px 0 4px; color: var(--t1); }
+    .streak-popup-sub { font-size: 13px; color: var(--t3); margin-bottom: 18px; }
+    .streak-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 9997; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .streak-overlay.show { opacity: 1; pointer-events: auto; }
+
+    /* ── Practice mode ── */
+    .practice-banner { padding: 8px 14px; background: linear-gradient(135deg, #0e2a18, #1a4a2e); border-bottom: 1px solid #2d6b42; display: none; align-items: center; gap: 8px; flex-shrink: 0; }
+    .practice-banner.active { display: flex; }
+    .practice-banner-text { font-size: 12px; color: #4cd87c; font-weight: 700; flex: 1; }
+    .practice-end-btn { background: none; border: 1px solid #4cd87c; color: #4cd87c; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; }
+
     /* ── Confetti ── */
     .confetti-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
     .confetti-piece { position: absolute; width: 8px; height: 10px; top: -20px; animation: confettiFall linear forwards; border-radius: 2px; }
@@ -247,9 +266,20 @@
   <h1>🗣️ 외국어 표현</h1>
   <div class="header-right">
     <div class="stats" id="headerStats">불러오는 중...</div>
+    <div class="streak-badge cold" id="streakBadge" onclick="showStreakPopup()" title="연속 학습일">🔥 0일</div>
     <button class="icon-btn" onclick="refreshData()" id="refreshBtn" title="새로고침">↻</button>
     <button class="icon-btn" onclick="toggleDark()" id="darkBtn" title="다크모드">🌙</button>
   </div>
+</div>
+
+<!-- Streak popup -->
+<div class="streak-overlay" id="streakOverlay" onclick="hideStreakPopup()"></div>
+<div class="streak-popup" id="streakPopup">
+  <div class="streak-popup-fire">🔥</div>
+  <div class="streak-popup-count" id="streakCount">0</div>
+  <div class="streak-popup-label">일 연속 학습 중!</div>
+  <div class="streak-popup-sub" id="streakSub">최장 기록: 0일</div>
+  <button class="btn btn-primary" style="width:100%;padding:11px" onclick="hideStreakPopup()">계속 공부하기 💪</button>
 </div>
 
 <!-- 복습 탭 -->
@@ -358,8 +388,13 @@
   </div>
   <div id="chat-ui-wrap" class="chat-ui-wrap" style="display:none">
     <div class="chat-toolbar">
-      <button class="chat-tool-btn" onclick="resetChat()">🗑️ 대화 초기화</button>
+      <button class="chat-tool-btn" id="practiceBtn" onclick="togglePracticeMode()" style="color:var(--p);font-weight:800">🎭 대화 연습</button>
+      <button class="chat-tool-btn" onclick="resetChat()">🗑️ 초기화</button>
       <button class="chat-tool-btn" onclick="clearApiKey()">🔑 키 변경</button>
+    </div>
+    <div class="practice-banner" id="practiceBanner">
+      <span class="practice-banner-text">🎭 대화 연습 모드 — AI가 배운 표현을 써서 대화해줘요</span>
+      <button class="practice-end-btn" onclick="togglePracticeMode()">종료</button>
     </div>
     <div id="chat-messages" class="chat-messages"></div>
     <div class="quick-actions">
@@ -432,6 +467,42 @@
   let quizScore = 0;
   let quizAnswered = false;
   let quizMode = 'expr'; // 'expr'=표현→뜻, 'meaning'=뜻→표현
+
+  // ── Streak ────────────────────────────────────────────────
+  function getStreak() {
+    try { return JSON.parse(localStorage.getItem('streak') || '{"count":0,"lastDate":"","longest":0}'); }
+    catch { return { count: 0, lastDate: '', longest: 0 }; }
+  }
+  function updateStreak() {
+    const s = getStreak();
+    const t = today();
+    if (s.lastDate === t) return s;
+    const prev = new Date(); prev.setDate(prev.getDate() - 1);
+    const yesterday = prev.toISOString().slice(0, 10);
+    s.count = (s.lastDate === yesterday) ? s.count + 1 : 1;
+    s.lastDate = t;
+    s.longest = Math.max(s.longest, s.count);
+    localStorage.setItem('streak', JSON.stringify(s));
+    return s;
+  }
+  function renderStreak(s) {
+    const badge = document.getElementById('streakBadge');
+    if (!badge) return;
+    badge.textContent = `🔥 ${s.count}일`;
+    if (s.count >= 1) badge.classList.remove('cold');
+    else badge.classList.add('cold');
+  }
+  function showStreakPopup() {
+    const s = getStreak();
+    document.getElementById('streakCount').textContent = s.count;
+    document.getElementById('streakSub').textContent = `최장 기록: ${s.longest}일 · 오늘도 화이팅! 💪`;
+    document.getElementById('streakPopup').classList.add('show');
+    document.getElementById('streakOverlay').classList.add('show');
+  }
+  function hideStreakPopup() {
+    document.getElementById('streakPopup').classList.remove('show');
+    document.getElementById('streakOverlay').classList.remove('show');
+  }
 
   // ── Dark mode ─────────────────────────────────────────────
   function initDark() {
@@ -904,6 +975,43 @@
     finally { btn.style.animation = ''; }
   }
 
+  // ── AI Practice Mode ──────────────────────────────────────
+  let conversationPracticeMode = false;
+
+  function togglePracticeMode() {
+    conversationPracticeMode = !conversationPracticeMode;
+    const banner = document.getElementById('practiceBanner');
+    const btn = document.getElementById('practiceBtn');
+    if (conversationPracticeMode) {
+      banner.classList.add('active');
+      btn.style.color = '#4cd87c';
+      resetChat();
+      const vocabList = expressions.slice(0, 20).map(e => `${e.표현}(${e.뜻})`).join(', ');
+      const lang = expressions.filter(e => e.언어.includes('중국어')).length >= expressions.filter(e => e.언어.includes('일본어')).length ? '중국어' : '일본어';
+      appendChatBubble('assistant', `🎭 대화 연습 모드 시작!\n\n저는 지금부터 ${lang} 원어민처럼 대화할게요. 아래 단어들을 자연스럽게 대화 속에서 써볼게요:\n\n📚 ${vocabList.slice(0, 120)}...\n\n준비됐으면 한국어로 말을 걸어줘요! 대화하면서 모르는 표현은 바로 설명해드릴게요 😊`);
+    } else {
+      banner.classList.remove('active');
+      btn.style.color = 'var(--p)';
+      resetChat();
+    }
+  }
+
+  function getPracticeSystemPrompt() {
+    const vocabList = expressions.slice(0, 30).map(e => `${e.표현}(${e.뜻})`).join(', ');
+    const cn = expressions.filter(e => e.언어.includes('중국어')).length;
+    const jp = expressions.filter(e => e.언어.includes('일본어')).length;
+    const mainLang = cn >= jp ? '중국어' : '일본어';
+    return `당신은 ${mainLang} 원어민 회화 파트너입니다. 사용자와 자연스러운 대화를 나누며 언어 학습을 도와주세요.
+
+규칙:
+1. 사용자가 한국어로 말하면 ${mainLang}로 대화하고, 바로 아래에 한국어 해석을 [ ] 안에 달아주세요
+2. 대화 속에서 다음 표현들을 자연스럽게 사용하세요: ${vocabList}
+3. 사용자가 모르는 표현을 쓰면 친절하게 설명해주세요
+4. 대화는 짧고 자연스럽게 (1-3문장), 너무 길지 않게
+5. 사용한 새로운 표현은 대화 끝에 💡로 짧게 설명
+6. [EXPR] 태그는 사용자가 명시적으로 단어장 추가를 원할 때만 사용`;
+  }
+
   // ── AI Chat ───────────────────────────────────────────────
   function getVocabContext() {
     if (!expressions?.length) return '';
@@ -1105,7 +1213,7 @@
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method:'POST',
         headers:{ 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-        body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:2048, system: CHAT_SYSTEM_PROMPT + getVocabContext(), messages: chatHistory.map(m=>({role:m.role,content:m.content})) })
+        body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:2048, system: conversationPracticeMode ? getPracticeSystemPrompt() : CHAT_SYSTEM_PROMPT + getVocabContext(), messages: chatHistory.map(m=>({role:m.role,content:m.content})) })
       });
       if (thinking.parentNode) thinking.parentNode.removeChild(thinking);
       if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||`API 오류 ${res.status}`); }
@@ -1128,6 +1236,14 @@
       await loadExpressions();
       renderReview();
       updateStats();
+      // 스트릭 업데이트
+      const prevStreak = getStreak();
+      const s = updateStreak();
+      renderStreak(s);
+      // 연속 2일 이상이고 오늘 처음 열면 팝업
+      if (s.count >= 2 && prevStreak.lastDate !== today()) {
+        setTimeout(() => showStreakPopup(), 1200);
+      }
     } catch (err) {
       document.getElementById('review-content').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>데이터를 불러오지 못했습니다.<br><small>${err.message}</small></p></div>`;
     }
